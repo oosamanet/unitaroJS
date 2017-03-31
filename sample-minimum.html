@@ -1,0 +1,60 @@
+<html>
+<head>
+<meta charset="utf-8">
+<title>UNITAROjs</title>
+<meta name="viewport" content="width=device-width,user-scalable=no" />
+<style>
+body{
+  margin: 0px;
+  padding: 0px;
+}
+</style>
+<script src="js/unitaro.js"></script>
+</head>
+<body>
+<script>
+
+var PLAYER={
+  w:20,
+  h:20,
+  color:'red',
+  speed:10,
+  init:function(x,y){
+    this.x=x;
+    this.y=y;
+    this.tx=x;
+    this.ty=y;
+  },
+  update:function(){
+    if (this.tx < this.x){
+      this.x -= 1;
+    }
+    if (this.tx > this.x){
+      this.x += 1;
+    }
+  },
+};
+
+var APP = {
+  WIDTH: 320,
+  HEIGHT: 500,
+  init: function(){
+    this.player=new unitaro.Task(PLAYER,100,100);
+  },
+  update: function(age){
+    unitaro.dib.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
+    unitaro.dib.textout(50,20,"minimum sample","yellow",100);
+  },
+  onclick: function(x,y){
+    this.player.tx=x;
+    this.player.ty=y;
+  }
+};
+
+window.addEventListener('load',function(){
+	window.app = new unitaro.App(APP);
+},false);
+
+</script>
+</body>
+</html>
