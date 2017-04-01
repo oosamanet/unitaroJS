@@ -1,0 +1,85 @@
+<html>
+<head>
+<meta charset="utf-8">
+<title>UNITAROjs</title>
+<meta name="viewport" content="width=device-width,user-scalable=no" />
+<style>
+body{
+  margin: 0px;
+  padding: 0px;
+}
+</style>
+<script src="js/unitaro.js"></script>
+</head>
+<body>
+<script>
+
+var FIRE={
+  w:20,
+  h:20,
+  color:'red',
+  speed:10,
+  init:function(x,y){
+    this.x=x;
+    this.y=y;
+  },
+  update:function(){
+    this.y -= this.speed;
+    if (this.y < this.target){
+      for (var i=0;i<16;i++){
+	    new unitaro.Task(FIRE_SUB,this.x,this.y,i*360/16);
+      }
+      this.stop();
+    }
+  },
+};
+
+var FIRE_SUB={
+  w:20,
+  h:20,
+  color:'red',
+  speed:10,
+  init:function(x,y,dir){
+    this.x=x;
+    this.y=y;
+    this.dir=dir;
+  },
+  update:function(age){
+    if (age%2==0){
+      this.color="rgb(255,28,28)";
+    }else{
+      this.color="rgb(255,128,128)";
+	}
+    this.x += Math.cos(Math.PI*2*this.dir / 360.0) * this.speed;
+    this.y -= Math.sin(Math.PI*2*this.dir / 360.0) * this.speed;
+    if (this.x < -20 || this.x > app.WIDTH || this.y < -20 || this.y > app.HEIGHT){
+      this.stop();
+    }
+  },
+};
+
+var APP = {
+  WIDTH: 320,
+  HEIGHT: 500,
+  init: function(){
+  },
+  update: function(age){
+    unitaro.dib.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
+    unitaro.dib.box(10,10,this.WIDTH-20,this.HEIGHT-20,"rgb(0,0,0)");
+    unitaro.dib.textout(50,20,"Fireworks sample","yellow",100);
+  },
+  onclick: function(x,y){
+    var self=this;
+    //クリックされた時に呼ばれる関数
+    this.fire=new unitaro.Task(FIRE,x,app.HEIGHT);
+    this.fire.target = y;
+  }
+};
+
+window.addEventListener('load',function(){
+	window.app = new unitaro.App(APP);
+},false);
+
+</script>
+</body>
+</html>
