@@ -1,0 +1,65 @@
+<html>
+<head>
+<meta charset="utf-8">
+<title>UNITAROjs</title>
+<meta name="viewport" content="width=device-width,user-scalable=no" />
+<style>
+body{
+  margin: 0px;
+  padding: 0px;
+}
+</style>
+<script src="js/unitaro.js"></script>
+</head>
+<body>
+<script>
+
+var PLAYER={
+  w:30,
+  h:30,
+  color:'red',
+  speed:10,
+  init:function(x,y){
+    this.x=x;
+    this.y=y;
+    this.options.center=true;
+  },
+  update:function(age){
+    this.w += 0.4;
+    this.h += 0.4;
+    this.y -= this.speed;
+    if (this.y < this.target){
+      for (var i=0;i<16;i++){
+	    new unitaro.Task(FIRE_SUB,this.x,this.y,i*360/16);
+      }
+      this.stop();
+    }
+  },
+};
+
+var APP = {
+  WIDTH: 320,
+  HEIGHT: 500,
+  init: function(){
+    this.player=new unitaro.Task(PLAYER);
+    this.enemy=new unitaro.Task(ENEMY);
+    this.enemy.set_type('enemy');
+  },
+  update: function(age){
+    unitaro.dib.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
+    unitaro.dib.box(10,10,this.WIDTH-20,this.HEIGHT-20,"rgb(0,0,0)");
+    unitaro.dib.textout(50,20,"Shooter sample","yellow",100);
+  },
+  onclick: function(x,y){
+    var tama=new unitaro.Task(TAMA,this.player.x,this.player.y);
+    tama.set_type('tama');
+  }
+};
+
+window.addEventListener('load',function(){
+	window.app = new unitaro.App(APP);
+},false);
+
+</script>
+</body>
+</html>
