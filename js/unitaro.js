@@ -98,38 +98,7 @@ unitaro.TaskManager={
     this.task_list=[];
     this.type_list={};
   },
-};
-
-unitaro.Task=function(task){
-  this.timer=0;
-  this.type='';
-  this.live=true;
-  this.init=function(){};
-  this.update=function(){};
-  this.draw=function(){
-    if (this.w > 0){
-      unitaro.dib.box(this.x,this.y,this.w,this.h,this.color);
-    }
-  };
-  for (i in task){
-    this[i]=task[i];
-  }
-
-  unitaro.TaskManager.add_task(this);
-  this.init.apply(this,Array.prototype.slice.call(arguments,1));
-};
-unitaro.Task.prototype={
-  stop: function(){
-    this.live=false;
-  },
-  set_type: function(type){
-    this.type=type;
-    unitaro.TaskManager.add_type(type,this);
-  },
-  clear: function(){
-    unitaro.TaskManager.clear();
-  },
-  hit_check: function(t1,t2){
+  hitcheck_all: function(t1,t2){
     if (! this.type_list[t1] || ! this.type_list[t2]){
        return;
     }
@@ -195,8 +164,71 @@ unitaro.Task.prototype={
     }
 
   },
+  call_all_with_hitcheck: function(mes,x,y){
+    for (var i in unitaro.TaskManager.task_list){
+      var t=unitaro.TaskManager.task_list[i];
+      if (!t.hitcheck(x,y)){
+        continue;
+      }
+      if ("function" == typeof(t[mes])){
+        t[mes].apply(t,Array.prototype.slice.call(arguments,1));
+      }
+    }
+
+  },
   draw_all: function(){
     this.call_all('draw');
+  },
+};
+
+unitaro.Task=function(task){
+  this.timer=0;
+  this.type='';
+  this.live=true;
+  this.init=function(){};
+  this.update=function(){};
+  this.draw=function(){
+    if (this.w > 0){
+      unitaro.dib.box(this.x-this.w/2,this.y-this.h/2,this.w,this.h,this.color);
+    }
+  };
+  for (i in task){
+    this[i]=task[i];
+  }
+
+  unitaro.TaskManager.add_task(this);
+  this.init.apply(this,Array.prototype.slice.call(arguments,1));
+};
+unitaro.Task.prototype={
+  stop: function(){
+    this.live=false;
+  },
+  set_type: function(type){
+    this.type=type;
+    unitaro.TaskManager.add_type(type,this);
+  },
+  clear: function(){
+    unitaro.TaskManager.clear();
+  },
+  hitcheck: function(param1,param2){
+    var x,y,w,h;
+    if ("object" == typeof param1){
+      x=param1.x;
+      y=param1.y
+      w=param1.w;
+      h=param1.h;
+    }else{
+      x=param1;
+      y=param2;
+      w=1;
+      h=1;
+    }
+    return (
+      this.x-this.w/2 < x+w/2 &&
+      this.x+this.w/2 > x-w/2 &&
+      this.y-this.h/2 < y+h/2 &&
+      this.y+this.h/2 > y-h/2
+    );
   },
   on_bomb: function(){
     console.dir("BOMB "+this.type+" "+this.x+","+this.y);
@@ -211,6 +243,7 @@ unitaro.App=function(app){
   for (i in app){
     self[i]=app[i];
   }
+  self.fps = self.fps || 20;
 
   unitaro.dib.init(self.WIDTH,self.HEIGHT,self.target);
 
@@ -224,7 +257,7 @@ unitaro.App=function(app){
       x/=unitaro.scale;
       y/=unitaro.scale;
     }
-    self.root.call_all("onclick",x,y);
+    unitaro.TaskManager.call_all("onclick",x,y);
   });
   self.root=new unitaro.Task({onclick:function(x,y){self.onclick(x,y)}});
 
@@ -236,12 +269,12 @@ unitaro.App=function(app){
       }
       self.update(age);
 
-      self.root.update_all(age);
-      self.root.draw_all(age);
+      unitaro.TaskManager.update_all(age);
+      unitaro.TaskManager.draw_all(age);
 
       loop();
       age++;
-    },1000/20);
+    },1000/self.fps);
   };
   loop();
   if (!self.target){
