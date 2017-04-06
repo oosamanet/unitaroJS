@@ -94,6 +94,12 @@ unitaro.TaskManager={
     }
     this.type_list[type].push(task);
   },
+  del_type: function(type,task){
+    if (!this.type_list[type]){
+      this.type_list[type]=[];
+    }
+    this.delete_if(task,this.type_list[type]);
+  },
   clear: function(){
     this.task_list=[];
     this.type_list={};
@@ -119,16 +125,16 @@ unitaro.TaskManager={
             y2_2 <= y1_1 || y1_2 <= y2_1){
            continue;
         }
-        if (typeof task2.on_bomb == "function"){
-          task2.on_bomb();
+        if (typeof task2.onhit == "function"){
+          task2.onhit();
         }
         flag=true;
       }
       if (!flag){
         continue;
       }
-      if (typeof task1.on_bomb == "function"){
-        task1.on_bomb();
+      if (typeof task1.onhit == "function"){
+        task1.onhit();
       }
     }
   },
@@ -139,25 +145,26 @@ unitaro.TaskManager={
       }
     });
   },
-  update_all: function(age){
+  update_all: function(){
     var delete_list=[];
-    for (var i in unitaro.TaskManager.task_list){
-      var t=unitaro.TaskManager.task_list[i];
+    for (var i in this.task_list){
+      var t=this.task_list[i];
+      var age=t.age++;
       t.update(age);
       if (!t.live){
         delete_list.push(t);
       }
     }
     for (var i in delete_list){
-      this.delete_if(delete_list[i],unitaro.TaskManager.task_list);
-      for (var j in unitaro.TaskManager.type_list){
-        this.delete_if(delete_list[i],unitaro.TaskManager.type_list[j]);
+      this.delete_if(delete_list[i],this.task_list);
+      for (var j in this.type_list){
+        this.delete_if(delete_list[i],this.type_list[j]);
       }
     }
   },
   call_all: function(mes){
-    for (var i in unitaro.TaskManager.task_list){
-      var t=unitaro.TaskManager.task_list[i];
+    for (var i in this.task_list){
+      var t=this.task_list[i];
       if ("function" == typeof(t[mes])){
         t[mes].apply(t,Array.prototype.slice.call(arguments,1));
       }
@@ -165,8 +172,8 @@ unitaro.TaskManager={
 
   },
   call_all_with_hitcheck: function(mes,x,y){
-    for (var i in unitaro.TaskManager.task_list){
-      var t=unitaro.TaskManager.task_list[i];
+    for (var i in this.task_list){
+      var t=this.task_list[i];
       if (!t.hitcheck(x,y)){
         continue;
       }
@@ -184,6 +191,7 @@ unitaro.TaskManager={
 unitaro.Task=function(task){
   this.timer=0;
   this.type='';
+  this.age=0;
   this.live=true;
   this.init=function(){};
   this.update=function(){};
@@ -202,6 +210,7 @@ unitaro.Task=function(task){
 unitaro.Task.prototype={
   stop: function(){
     this.live=false;
+    unitaro.TaskManager.del_type(this.type,this);
   },
   set_type: function(type){
     this.type=type;
@@ -269,8 +278,8 @@ unitaro.App=function(app){
       }
       self.update(age);
 
-      unitaro.TaskManager.update_all(age);
-      unitaro.TaskManager.draw_all(age);
+      unitaro.TaskManager.update_all();
+      unitaro.TaskManager.draw_all();
 
       loop();
       age++;
