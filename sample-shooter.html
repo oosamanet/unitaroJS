@@ -17,38 +17,100 @@ body{
 var PLAYER={
   w:30,
   h:30,
-  color:'red',
+  color:'#00f',
   speed:10,
   init:function(x,y){
     this.x=x;
     this.y=y;
-    this.options.center=true;
   },
   update:function(age){
-    this.w += 0.4;
-    this.h += 0.4;
+    this.x = app.WIDTH/2 + Math.sin(age/360*2*Math.PI)*100;
+  },
+};
+
+var TAMA={
+  w:5,
+  h:5,
+  color:'#08f',
+  speed:10,
+  init:function(x,y){
+    this.x=x;
+    this.y=y;
+    this.set_type("tama");
+  },
+  update:function(age){
     this.y -= this.speed;
-    if (this.y < this.target){
-      for (var i=0;i<16;i++){
-	    new unitaro.Task(FIRE_SUB,this.x,this.y,i*360/16);
-      }
+    if (this.y < 0){
       this.stop();
     }
   },
+  onhit:function(){
+    this.stop();
+  }
+};
+
+var BOMB={
+  w:5,
+  h:5,
+  color:'red',
+  speed:3,
+  init:function(x,y,xspeed,yspeed){
+    this.x=x;
+    this.y=y;
+    this.xspeed=xspeed;
+    this.yspeed=yspeed;
+  },
+  update:function(age){
+    this.x += this.xspeed;
+    this.y += this.yspeed;
+    this.w += this.speed;
+    this.h += this.speed;
+    if (age > 10){
+      this.stop();
+    }
+  },
+  onhit:function(){
+    this.stop();
+  }
+};
+
+var ENEMY={
+  w:50,
+  h:30,
+  color:'yellow',
+  speed:10,
+  init:function(x,y){
+    this.x=x;
+    this.y=y;
+    this.set_type("enemy");
+  },
+  update:function(age){
+  },
+  onhit:function(){
+console.dir("hit!!!");
+    new unitaro.Task(BOMB,this.x,this.y,-5,-5);
+    new unitaro.Task(BOMB,this.x,this.y,5,-5);
+    new unitaro.Task(BOMB,this.x,this.y,-5,5);
+    new unitaro.Task(BOMB,this.x,this.y,5,5);
+  }
 };
 
 var APP = {
   WIDTH: 320,
   HEIGHT: 500,
   init: function(){
-    this.player=new unitaro.Task(PLAYER);
-    this.enemy=new unitaro.Task(ENEMY);
+    this.player=new unitaro.Task(PLAYER,this.WIDTH/2,400);
+    this.enemy=new unitaro.Task(ENEMY,this.WIDTH/4,100);
+    this.enemy=new unitaro.Task(ENEMY,this.WIDTH/2,100);
+    this.enemy=new unitaro.Task(ENEMY,this.WIDTH*3/4,100);
     this.enemy.set_type('enemy');
   },
   update: function(age){
     unitaro.dib.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
     unitaro.dib.box(10,10,this.WIDTH-20,this.HEIGHT-20,"rgb(0,0,0)");
     unitaro.dib.textout(50,20,"Shooter sample","yellow",100);
+
+    unitaro.TaskManager.hitcheck_all("tama","enemy");
   },
   onclick: function(x,y){
     var tama=new unitaro.Task(TAMA,this.player.x,this.player.y);
