@@ -33,6 +33,47 @@ var PLAYER={
       this.x += 1;
     }
   },
+  onclick:function(x,y){
+    new unitaro.Task(TAMA,this.x,this.y);
+    new unitaro.Task(TAMA2,this.x,this.y);
+  }
+};
+
+var TAMA={
+  w:10,
+  h:10,
+  color:'blue',
+  speed:20,
+  init:function(x,y,xspeed,yspeed){
+    this.x=x;
+    this.y=y;
+    this.xspeed=xspeed;
+    this.yspeed=yspeed;
+  },
+  update:function(){
+    this.x += this.xspeed;
+    this.y += this.yspeed;
+    if (this.y < 0){
+      this.stop();
+    }
+  },
+};
+
+var TAMA2={
+  w:10,
+  h:10,
+  color:'red',
+  speed:10,
+  init:function(x,y){
+    this.x=x;
+    this.y=y;
+  },
+  update:function(){
+    this.y -= this.speed;
+    if (this.y < 0){
+      this.stop();
+    }
+  },
 };
 
 var APP = {
