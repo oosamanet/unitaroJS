@@ -1,0 +1,229 @@
+<html>
+<head>
+<meta charset="utf-8">
+<title>UNITAROjs</title>
+<meta name="viewport" content="width=device-width,user-scalable=no" />
+<style>
+body{
+  margin: 0px;
+  padding: 0px;
+}
+</style>
+<script src="js/unitaro.js"></script>
+</head>
+<body>
+<script>
+
+var TARGET = {
+  w:20,
+  h:20,
+  color:"yellow",
+  init:function(x,y){
+    this.x=x;
+    this.y=y;
+  }
+};
+
+var WormHead1 = {
+  w:10,
+  h:10,
+  color:"#6f6",
+  init:function(target,x,y){
+    this.x=x;
+    this.y=y;
+    this.target=target;
+    this.dirspeed=6;
+    this.speed=2.1;
+    this.dir=0;
+    this.set_type("enemy");
+    target=this;
+    for (var i=0;i<30;i++){
+      target=new unitaro.Task(WormTail1,target);
+    }
+  },
+  update:function(age){
+    var target_dir=Math.atan2(this.y - this.target.y,this.target.x - this.x)*180.0/Math.PI;
+    this.dir=target_dir;
+    this.x+=Math.cos(this.dir*Math.PI*2/360.0)*this.speed;
+    this.y-=Math.sin(this.dir*Math.PI*2/360.0)*this.speed;
+  }
+};
+
+var WormTail1={
+  w:10,
+  h:10,
+  color:"#0e0",
+  init:function(target){
+    this.target=target;
+    this.x=target.x;
+    this.y=target.y;
+    this.len=6;
+    this.hist=[];
+    for (var i=0;i<this.len;i++){
+      this.hist.push([this.x,this.y]);
+    }
+  },
+  update:function(age){
+    if (! this.target.live){
+      this.stop();
+      return;
+    }
+    var pos=this.hist.shift();
+    this.x=pos[0];
+    this.y=pos[1];
+    this.hist.push([this.target.x,this.target.y]);
+  }
+};
+
+var WormHead2 = {
+  w:20,
+  h:20,
+  color:"#08f",
+  init:function(target,x,y){
+    this.x=x;
+    this.y=y;
+    this.target=target;
+    this.dirspeed=7.3;
+    this.speed=3.1;
+    this.dir=0;
+    this.set_type("enemy");
+    target=this;
+    for (var i=0;i<30;i++){
+      target=new unitaro.Task(WormTail2,target);
+    }
+  },
+  update:function(age){
+    var target_dir=Math.atan2(this.y - this.target.y,this.target.x - this.x)*180.0/Math.PI;
+    if (age%1==0){
+      var deg=target_dir-this.dir;
+      while (deg<0){
+        deg+=360;
+      }
+      if (deg>180){
+        this.dir=(this.dir-this.dirspeed+360)%360;
+      }
+      if (deg<180){
+        this.dir=(this.dir+this.dirspeed)%360;
+      }
+    }
+    this.x+=Math.cos(this.dir*Math.PI*2/360.0)*this.speed;
+    this.y-=Math.sin(this.dir*Math.PI*2/360.0)*this.speed;
+  }
+};
+
+var WormTail2={
+  w:20,
+  h:20,
+  color:"#4cf",
+  init:function(target){
+    this.target=target;
+    this.x=target.x;
+    this.y=target.y;
+    this.len=6;
+    this.hist=[];
+    for (var i=0;i<this.len;i++){
+      this.hist.push([this.x,this.y]);
+    }
+  },
+  update:function(age){
+    if (! this.target.live){
+      this.stop();
+      return;
+    }
+    var pos=this.hist.shift();
+    this.x=pos[0];
+    this.y=pos[1];
+    this.hist.push([this.target.x,this.target.y]);
+  }
+};
+
+var WormHead3 = {
+  w:30,
+  h:30,
+  color:"#f40",
+  init:function(target,x,y){
+    this.x=x;
+    this.y=y;
+    this.target=target;
+    this.dirspeed=6;
+    this.speed=2.1;
+    this.dir=0;
+    this.set_type("enemy");
+    target=this;
+    for (var i=0;i<30;i++){
+      target=new unitaro.Task(WormTail3,target);
+    }
+  },
+  update:function(age){
+    var target_dir=Math.atan2(this.y - this.target.y,this.target.x - this.x)*180.0/Math.PI;
+    if (age%4==0){
+      var deg=target_dir-this.dir;
+      while (deg<0){
+        deg+=360;
+      }
+      if (deg>180){
+        this.dir=(this.dir-this.dirspeed+360)%360;
+      }
+      if (deg<180){
+        this.dir=(this.dir+this.dirspeed)%360;
+      }
+    }
+    this.x+=Math.cos(this.dir*Math.PI*2/360.0)*this.speed;
+    this.y-=Math.sin(this.dir*Math.PI*2/360.0)*this.speed;
+  }
+};
+
+var WormTail3={
+  w:30,
+  h:30,
+  color:"#e00",
+  init:function(target){
+    this.target=target;
+    this.x=target.x;
+    this.y=target.y;
+    this.len=6;
+    this.hist=[];
+    for (var i=0;i<this.len;i++){
+      this.hist.push([this.x,this.y]);
+    }
+  },
+  update:function(age){
+    if (! this.target.live){
+      this.stop();
+      return;
+    }
+    var pos=this.hist.shift();
+    this.x=pos[0];
+    this.y=pos[1];
+    this.hist.push([this.target.x,this.target.y]);
+  }
+};
+
+
+var APP = {
+  WIDTH: 320,
+  HEIGHT: 500,
+  init: function(){
+    this.target=new unitaro.Task(TARGET,160,240);
+    this.worm=new unitaro.Task(WormHead1,this.target,-50,480);
+    this.worm=new unitaro.Task(WormHead2,this.target,400,470);
+    this.worm=new unitaro.Task(WormHead3,this.target,400,170);
+  },
+  update: function(age){
+    unitaro.dib.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
+    unitaro.dib.box(10,10,this.WIDTH-20,this.HEIGHT-20,"rgb(0,0,0)");
+    unitaro.dib.textout(50,20,"Worm sample","yellow",100);
+  },
+  onclick: function(x,y){
+    this.target.x=x;
+    this.target.y=y;
+  }
+};
+
+window.addEventListener('load',function(){
+	window.app = new unitaro.App(APP);
+},false);
+
+</script>
+</body>
+</html>
