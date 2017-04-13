@@ -1,0 +1,123 @@
+<html>
+<head>
+<meta charset="utf-8">
+<title>UNITAROjs</title>
+<link id="favicon" rel="shortcut icon" src="">
+<meta name="viewport" content="width=device-width,user-scalable=no" />
+<style>
+body{
+  margin: 0px;
+  padding: 0px;
+}
+</style>
+<script src="js/unitaro.js"></script>
+</head>
+<body>
+<script>
+
+var LEFTBAR={
+  w:2,
+  h:12,
+  color:'red',
+  init:function(x,y){
+    this.x=x;
+    this.y=y;
+  },
+  update:function(){
+    var y = app.ball.y - 6;
+    if (y<0){
+      y=0;
+    }
+    if (y>32-12){
+      y=32-12;
+    }
+
+    if (app.ball.vx<0){
+      if (this.y<y){
+        this.y++;
+      }
+      if (this.y>y){
+        this.y--;
+      }
+    }
+  },
+};
+
+var RIGHTBAR={
+  w:2,
+  h:12,
+  color:'red',
+  init:function(x,y){
+    this.x=x;
+    this.y=y;
+  },
+  update:function(){
+    var y = app.ball.y - 6;
+    if (y<0){
+      y=0;
+    }
+    if (y>32-12){
+      y=32-12;
+    }
+
+    if (app.ball.vx>0){
+      if (this.y<y){
+        this.y++;
+      }
+      if (this.y>y){
+        this.y--;
+      }
+    }
+  },
+};
+
+var BALL={
+  w:2,
+  h:2,
+
+  color:'blue',
+  init:function(x,y){
+    this.x=x;
+    this.y=y;
+    this.vx=1;
+    this.vy=1;
+  },
+  update:function(){
+    if (app.ball.x<=0 || app.ball.x>=28){
+      this.vx = -this.vx;
+    }
+    if (app.ball.y<=0 || app.ball.y>=30){
+      this.vy = -this.vy;
+    }
+    this.x += this.vx;
+    this.y += this.vy;
+  },
+};
+
+var APP = {
+  WIDTH: 32,
+  HEIGHT: 32,
+  init: function(){
+    this.leftbar=new unitaro.Task(LEFTBAR,0,0);
+    this.rightbar=new unitaro.Task(RIGHTBAR,30,20);
+    this.ball=new unitaro.Task(BALL,15,15);
+  },
+  update: function(age){
+    favicon.href=unitaro.dib.canvas.toDataURL()
+    unitaro.dib.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
+  },
+  onclick: function(x,y){
+  }
+};
+
+window.addEventListener('load',function(){
+  var lnk = document.createElement('link');
+  lnk.rel = 'shortcut icon';lnk.id='favicon';
+  document.querySelector('head').appendChild(lnk);
+
+  window.app = new unitaro.App(APP);
+},false);
+
+</script>
+</body>
+</html>

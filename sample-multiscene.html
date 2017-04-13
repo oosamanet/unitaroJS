@@ -1,0 +1,158 @@
+<html>
+<head>
+<meta charset="utf-8">
+<title>UNITAROjs</title>
+<meta name="viewport" content="width=device-width,user-scalable=no" />
+<style>
+body{
+  margin: 0px;
+  padding: 0px;
+}
+</style>
+<script src="js/unitaro.js"></script>
+</head>
+<body>
+<script>
+
+var TitleScene={
+  init:function(){
+  },
+  draw:function(){
+    unitaro.dib.textout(150,200,"CLICK TO START",100);
+  },
+  update:function(){
+  },
+  onclick:function(){
+    unitaro.TaskManager.clear();
+    new unitaro.Task(GameScene);
+    console.dir("CLICKED");
+  },
+};
+
+var GameScene={
+  init:function(){
+    this.player=new unitaro.Task(PLAYER,app.WIDTH/2,400);
+    this.enemy_left=new unitaro.Task(ENEMY,-50,100);
+    this.enemy_right=new unitaro.Task(ENEMY,app.WIDTH+50,140);
+  },
+  draw:function(){
+  },
+  update:function(){
+    if (!this.enemy_left.live){
+      this.enemy_left=new unitaro.Task(ENEMY,-50,100);
+    }
+    if (!this.enemy_right.live){
+      this.enemy_right=new unitaro.Task(ENEMY,app.WIDTH+50,140);
+    }
+    if (!this.player.live){
+      unitaro.TaskManager.clear();
+      new unitaro.Task(TitleScene);
+    }
+  },
+  onclick:function(){
+  },
+};
+
+var PLAYER={
+  w:20,
+  h:20,
+  color:'blue',
+  init:function(x,y){
+    this.x=x;
+    this.y=y;
+    this.set_type("player");
+  },
+  update:function(age){
+  },
+  onclick:function(x,y){
+    new unitaro.Task(TAMA,this.x,this.y);
+    if (x<app.WIDTH/2){
+      this.x-=4;
+    }else{
+      this.x+=4;
+    }
+  },
+};
+
+var TAMA={
+  w:10,
+  h:10,
+  color:'cyan',
+  init:function(x,y){
+    this.x=x;
+    this.y=y;
+    this.set_type("player");
+  },
+  update:function(age){
+    this.y -= 10;
+    if (this.y<0){
+      this.stop();
+    }
+  },
+};
+
+var ENEMY={
+  w:50,
+  h:30,
+  color:'red',
+  init:function(x,y){
+    this.x=x;
+    this.y=y;
+    this.speed=2;
+    this.set_type("enemy");
+  },
+  update:function(age){
+    this.x += this.speed;
+    if (this.x>app.WIDTH*3/4){
+      this.speed=-2;
+    }
+    if (this.x<app.WIDTH*1/4){
+      this.speed=2;
+    }
+    if (age%32==0){
+      new unitaro.Task(ENEMYTAMA,this.x,this.y);
+    }
+  },
+};
+
+var ENEMYTAMA={
+  w:10,
+  h:10,
+  color:'pink',
+  init:function(x,y){
+    this.x=x;
+    this.y=y;
+    this.set_type("enemy");
+  },
+  update:function(age){
+    this.y += 10;
+    if (this.y>app.HEIGHT){
+      this.stop();
+    }
+  },
+};
+
+var APP = {
+  WIDTH: 320,
+  HEIGHT: 500,
+  init: function(){
+    new unitaro.Task(TitleScene);
+  },
+  update: function(age){
+    unitaro.dib.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
+    unitaro.dib.box(10,10,this.WIDTH-20,this.HEIGHT-20,"rgb(0,0,0)");
+    unitaro.dib.textout(50,20,"Multi Scene sample","yellow",100);
+
+    unitaro.TaskManager.hitcheck_all("player","enemy");
+  },
+  onclick:function(x,y){
+  },
+};
+
+window.addEventListener('load',function(){
+	window.app = new unitaro.App(APP);
+},false);
+
+</script>
+</body>
+</html>
