@@ -149,12 +149,13 @@ unitaro.TaskManager={
     var delete_list=[];
     for (var i in this.task_list){
       var t=this.task_list[i];
-      if (t){
-        var age=t.age++;
-        t.update(age);
-        if (!t.live){
-          delete_list.push(t);
-        }
+      if (t!==undefined){
+        t.age++;
+      }
+      var age=t.age;
+      t.update(age);
+      if (!t.live){
+        delete_list.push(t);
       }
     }
     for (var i in delete_list){
@@ -163,6 +164,18 @@ unitaro.TaskManager={
         this.delete_if(delete_list[i],this.type_list[j]);
       }
     }
+  },
+  is_inside: function(src,x,y,w,h){
+    if (w===undefined){
+      w=1;
+      h=1;
+    }
+    return (src.x===undefined) || (
+      src.x-src.w/2 < x+w/2 &&
+      src.x+src.w/2 > x-w/2 &&
+      src.y-src.h/2 < y+h/2 &&
+      src.y+src.h/2 > y-h/2
+    );
   },
   call_all: function(mes){
     for (var i in this.task_list){
@@ -176,7 +189,7 @@ unitaro.TaskManager={
   call_all_with_hitcheck: function(mes,x,y){
     for (var i in this.task_list){
       var t=this.task_list[i];
-      if (!t.hitcheck(x,y)){
+      if (!this.is_inside(t,x,y)){
         continue;
       }
       if ("function" == typeof(t[mes])){
@@ -218,29 +231,11 @@ unitaro.Task.prototype={
     this.type=type;
     unitaro.TaskManager.add_type(type,this);
   },
-  hitcheck: function(param1,param2){
-    var x,y,w,h;
-    if ("object" == typeof param1){
-      x=param1.x;
-      y=param1.y
-      w=param1.w;
-      h=param1.h;
-    }else{
-      x=param1;
-      y=param2;
-      w=1;
-      h=1;
-    }
-    return (
-      this.x-this.w/2 < x+w/2 &&
-      this.x+this.w/2 > x-w/2 &&
-      this.y-this.h/2 < y+h/2 &&
-      this.y+this.h/2 > y-h/2
-    );
+  clear: function(){
+    unitaro.TaskManager.clear();
   },
   onhit: function(){
-    this.stop();
-    console.dir("HIT "+this.type+" at "+this.x+","+this.y);
+    console.dir("BOMB "+this.type+" "+this.x+","+this.y);
   }
 };
 
@@ -266,7 +261,7 @@ unitaro.App=function(app){
       x/=unitaro.scale;
       y/=unitaro.scale;
     }
-    unitaro.TaskManager.call_all("onclick",x,y);
+    unitaro.TaskManager.call_all_with_hitcheck("onclick",x,y);
   });
   self.root=new unitaro.Task({onclick:function(x,y){self.onclick(x,y)}});
 
