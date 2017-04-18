@@ -60,6 +60,7 @@ var GameScene={
     }
   },
   onclick:function(){
+    this.player.y_velocity = this.player.y_jump_velocity;
   },
 };
 
@@ -101,9 +102,6 @@ var PLAYER={
     if (this.y < this.h/2){
       this.live=false;
     }
-  },
-  onclick: function() {
-    this.y_velocity = this.y_jump_velocity;
   },
 };
 
