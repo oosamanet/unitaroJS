@@ -149,9 +149,10 @@ unitaro.TaskManager={
     var delete_list=[];
     for (var i in this.task_list){
       var t=this.task_list[i];
-      if (t!==undefined){
-        t.age++;
+      if (t===undefined){
+        continue;
       }
+      t.age++;
       var age=t.age;
       t.update(age);
       if (!t.live){
@@ -236,6 +237,7 @@ unitaro.Task.prototype={
   },
   onhit: function(){
     console.dir("BOMB "+this.type+" "+this.x+","+this.y);
+    this.stop();
   }
 };
 
@@ -262,8 +264,10 @@ unitaro.App=function(app){
       y/=unitaro.scale;
     }
     unitaro.TaskManager.call_all_with_hitcheck("onclick",x,y);
+    if (self.onclick){
+      self.onclick(x,y);
+    }
   });
-  self.root=new unitaro.Task({onclick:function(x,y){self.onclick(x,y)}});
 
   var age=0;
   var loop = function(){

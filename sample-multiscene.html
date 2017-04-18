@@ -49,7 +49,13 @@ var GameScene={
       new unitaro.Task(TitleScene);
     }
   },
-  onclick:function(){
+  onclick:function(x,y){
+    new unitaro.Task(TAMA,this.player.x,this.player.y);
+    if (x<app.WIDTH/2){
+      this.player.x-=4;
+    }else{
+      this.player.x+=4;
+    }
   },
 };
 
@@ -63,14 +69,6 @@ var PLAYER={
     this.set_type("player");
   },
   update:function(age){
-  },
-  onclick:function(x,y){
-    new unitaro.Task(TAMA,this.x,this.y);
-    if (x<app.WIDTH/2){
-      this.x-=4;
-    }else{
-      this.x+=4;
-    }
   },
 };
 
@@ -146,6 +144,7 @@ var APP = {
     unitaro.TaskManager.hitcheck_all("player","enemy");
   },
   onclick:function(x,y){
+    
   },
 };
 
