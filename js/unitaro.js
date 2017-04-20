@@ -271,7 +271,8 @@ unitaro.App=function(app){
 
   var age=0;
   var loop = function(){
-    setTimeout(function(){
+    clearTimeout(self.timer);
+    self.timer=setTimeout(function(){
       if (age==0){
         self.init();
       }
