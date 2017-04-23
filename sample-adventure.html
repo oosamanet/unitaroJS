@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>sample - adventure</title>
+  <script src="https://rawgithub.com/oosamanet/unitaroJS/master/js/unitaro.js"></script>
+</head>
+<body>
+  <script>
+
+var BUTTON={
+  w:120,
+  h:20,
+  color:'#ccc',
+  init:function(x,y,str,cb){
+    this.x=x;
+    this.y=y;
+    this.str=str;
+    this.cb=cb;
+  },
+  onclick:function(){
+    this.cb();
+  },
+  draw:function(){
+    unitaro.dib.box(this.x-this.w/2,this.y-this.h/2,this.w,this.h,this.color);
+    unitaro.dib.textout(this.x,this.y+4,this.str,"blue",100);
+  },
+};
+
+var DIALOG_YESNO={
+  init:function(str,yes,no,cbyes,cbno){
+    this.str=str;
+    new unitaro.Task(BUTTON,100,300,yes,cbyes);
+    new unitaro.Task(BUTTON,250,300,no,cbno);
+  },
+  draw:function(){
+    unitaro.dib.textout(150,150,this.str,"white",200);
+  },
+};
+
+var ScenarioTask = {
+  init: function(){
+    if (app.pos=="家の前"){
+      new unitaro.Task(DIALOG_YESNO,"あなたの前に古い家がある","入る","入らない",function(){
+        app.pos="玄関";
+        unitaro.TaskManager.clear();
+        new unitaro.Task(ScenarioTask);
+      },function(){
+        unitaro.TaskManager.clear();
+        new unitaro.Task(GameOverTask,"大きな石が落ちてきて、あなたは死んだ");
+      });
+    }else if (app.pos=="玄関"){
+      new unitaro.Task(DIALOG_YESNO,"玄関の奥に大きなドアがある","入る","入らない",function(){
+        unitaro.TaskManager.clear();
+        new unitaro.Task(GameOverTask,"ドアの奥にはお宝があった！");
+      },function(){
+        unitaro.TaskManager.clear();
+        new unitaro.Task(GameOverTask,"あなたはかみなりに打たれて死んだ");
+      });
+    }
+  },
+  moveto:function(to){
+  },
+  draw:function(){
+    unitaro.dib.textout(150,100,"いまいる場所："+app.pos,"yellow",200);
+  },
+  update:function(){
+  }
+};
+
+var GameOverTask = {
+  init: function(mes){
+    app.pos="家の前";
+    this.mes=mes;
+  },
+  draw:function(){
+    unitaro.dib.textout(150,150,this.mes,"white",200);
+  },
+  onclick:function(){
+    console.dir("GameOver:click");
+      unitaro.TaskManager.clear();
+      new unitaro.Task(ScenarioTask);
+  }
+};
+
+var APP = {
+  WIDTH: 320,
+  HEIGHT: 500,
+  init: function(){
+    app.pos='家の前';
+    new unitaro.Task(ScenarioTask);
+  },
+  update: function(age){
+   unitaro.dib.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
+    unitaro.dib.box(10,10,this.WIDTH-20,this.HEIGHT-20,"rgb(0,0,0)");
+  },
+  onclick: function(x,y){
+  }
+};
+
+window.addEventListener('load',function(){
+  window.app = new unitaro.App(APP);
+},false);
+
+  </script>
+</body>
+</html>
