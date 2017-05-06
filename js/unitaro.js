@@ -80,6 +80,50 @@ unitaro.dib={
     this.ctx.fillText(text,x1,y1,w);
   },
   sprites: {},
+  drawsprite: function(n,x,y){
+    this.ctx.drawImage(this.sprites[n], x, y);
+  },
+  loadedcounter: 0,
+  loadcounter: 0,
+  setglobaloperation: function(ope){
+    this.ctx.globalCompositeOperation=ope;
+  },
+  loadimages: function(images,cb){
+    var self=this;
+    var row=Object.keys(images);
+    var name = row[self.loadcounter++];
+    var imgObj = new Image();
+    imgObj.addEventListener('load',function(){
+      self.loadedcounter++;
+      self.sprites[name]=imgObj;
+      if(row.length == self.loadedcounter){
+        if ("function" == typeof cb){
+          cb();
+        }
+      }else{
+        self.loadimages(images,cb);
+      }
+    },false);
+    imgObj.src = images[name];
+  }
+};
+
+unitaro.ResourceManager={
+  res_list: {},
+  load:function(list){
+    var self=this;
+    var images={};
+    for (var i in list){
+      if (list[i].match(/.mp3/)){
+        (function(i){
+          unitaro.sound.load(list[i],function(buf){ self.res_list[i]=buf;});
+        })(i);
+      }else{
+        images[i]=list[i];
+      }
+    }
+    unitaro.dib.loadimages(images);
+  },
 };
 
 unitaro.TaskManager={
@@ -110,13 +154,19 @@ unitaro.TaskManager={
     }
     for (var i in this.type_list[t1]){
       var task1 = this.type_list[t1][i];
+      if (!task1.live){
+        continue;
+      }
+      var flag=false;
       var x1_1=task1.x-task1.w/2;
       var x1_2=x1_1+task1.w;
       var y1_1=task1.y-task1.h/2;
       var y1_2=y1_1+task1.h;
-      var flag=false;
       for (var j in this.type_list[t2]){
         var task2 = this.type_list[t2][j];
+        if (!task2.live){
+          continue;
+        }
         var x2_1=task2.x-task2.w/2;
         var x2_2=x2_1+task2.w;
         var y2_1=task2.y-task2.h/2;
@@ -139,11 +189,12 @@ unitaro.TaskManager={
     }
   },
   delete_if:function(target,array1){
-    array1.some(function(v, i){
-      if (v==target){
+    for (var i in array1){
+      if (array1[i]==target){
         array1.splice(i,1);
+        return;
       }
-    });
+    }
   },
   update_all: function(){
     var delete_list=[];
@@ -190,7 +241,7 @@ unitaro.TaskManager={
   call_all_with_hitcheck: function(mes,x,y){
     for (var i in this.task_list){
       var t=this.task_list[i];
-      if (!this.is_inside(t,x,y)){
+      if (t===undefined || !this.is_inside(t,x,y)){
         continue;
       }
       if ("function" == typeof(t[mes])){
@@ -202,6 +253,76 @@ unitaro.TaskManager={
   draw_all: function(){
     this.call_all('draw');
   },
+};
+
+unitaro.sound={
+  driver:undefined,
+  init:function(){
+    if (window.AudioContext || window.webkitAudioContext){
+      this.driver=this.WebAudioDriver;
+    }else{
+      this.driver=this.AudioDriver;
+    }
+    this.driver.init();
+  },
+  load:function(url,cb){
+    if (!this.driver){
+      this.init();
+    }
+    this.driver.load(url,cb);
+  },
+  play:function(name,isloop){
+    if (!this.driver){
+      this.init();
+    }
+    this.driver.play(unitaro.ResourceManager.res_list[name],isloop);
+  },
+  AudioDriver:{
+    init:function(){
+      this.audio=new Audio("");
+    },
+    load:function(url,cb){
+      this.audio.src=url;
+      cb({duration:10});
+    },
+    play:function(buffer,isloop) {
+      this.audio.loop=isloop;
+      this.audio.play();
+    },
+  },
+  WebAudioDriver:{
+    init:function(){
+      window.AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (window.AudioContext){
+        this.context = new AudioContext();
+      }
+    },
+    load:function(url,cb){
+      var self=this;
+      var request = new XMLHttpRequest();
+      request.open('GET', url, true);
+      request.setRequestHeader('Range', 'bytes=0-');
+      request.responseType = 'arraybuffer';
+
+      request.onload = function() {
+        self.context.decodeAudioData(request.response, function(buffer) {
+          cb(buffer);
+        }, function () {
+          console.debug('error');
+        });
+      };
+
+      request.send();
+    },
+    play:function(buffer,isloop) {
+      var source = this.context.createBufferSource();
+      source.buffer = buffer;
+      source.loop=isloop;
+      source.connect(this.context.destination);
+      source.start(0);
+      return source;
+    }
+  }
 };
 
 unitaro.Task=function(task){
@@ -226,7 +347,6 @@ unitaro.Task=function(task){
 unitaro.Task.prototype={
   stop: function(){
     this.live=false;
-    unitaro.TaskManager.del_type(this.type,this);
   },
   set_type: function(type){
     this.type=type;
@@ -253,10 +373,14 @@ unitaro.App=function(app){
 
   unitaro.dib.init(self.WIDTH,self.HEIGHT,self.target);
 
-  var _click = (window.ontouchstart === undefined)? 'click' : 'touchstart';
+  if (self.assets){
+    ResourceManager.load(self.assets);
+  }
+
+  var _click = (window.ontouchstart === undefined)? 'mousedown' : 'touchstart';
   window.addEventListener(_click,function(e){
-    var x=e.pageX || e.touches[0].pageX;
-    var y=e.pageY || e.touches[0].pageY;
+    var x=e.touches ? e.touches[0].pageX : e.pageX;
+    var y=e.touches ? e.touches[0].pageY : e.pageY;
     if (unitaro.scaler && unitaro.offset){
       x=x-unitaro.offset[0];
       y=y-unitaro.offset[1];
@@ -268,6 +392,13 @@ unitaro.App=function(app){
       self.onclick(x,y);
     }
   });
+  var _click = (window.ontouchstart === undefined)? 'mouseup' : 'touchend';
+  window.addEventListener(_click,function(e){
+    unitaro.TaskManager.call_all_with_hitcheck("onclickend");
+    if (self.onclickend){
+      self.onclickend();
+    }
+  });
 
   var age=0;
   var loop = function(){
@@ -276,9 +407,11 @@ unitaro.App=function(app){
       if (age==0){
         self.init();
       }
-      self.update(age);
+      if (!self.paused){
+        self.update(age);
+        unitaro.TaskManager.update_all();
+      }
 
-      unitaro.TaskManager.update_all();
       unitaro.TaskManager.draw_all();
 
       loop();
