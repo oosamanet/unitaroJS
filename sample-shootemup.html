@@ -24,7 +24,6 @@ var PLAYER={
     this.y=y;
   },
   update:function(age){
-    this.x = app.WIDTH/2 + Math.sin(age/360*2*Math.PI)*100;
   },
 };
 
@@ -39,6 +38,7 @@ var TAMA={
     this.set_type("tama");
   },
   update:function(age){
+console.dir("TAMA "+this.x+":"+this.y);
     this.y -= this.speed;
     if (this.y < 0){
       this.stop();
@@ -77,16 +77,25 @@ var BOMB={
 var ENEMY={
   w:50,
   h:30,
-  color:'yellow',
-  speed:10,
-  init:function(x,y){
-    this.x=x;
-    this.y=y;
+  color:'red',
+  xspeed:10,
+  init:function(){
+    if (Math.random()<0.5){
+      this.x=0;
+      this.xspeed=5;
+    }else{
+      this.x=app.WIDTH;
+      this.xspeed=-5;
+	}
+    this.y=-this.h;
     this.set_type("enemy");
   },
   update:function(age){
+    this.x += this.xspeed;
+    this.y += 5;
   },
   onhit:function(){
+    this.stop();
     new unitaro.Task(BOMB,this.x,this.y,-5,-5);
     new unitaro.Task(BOMB,this.x,this.y,5,-5);
     new unitaro.Task(BOMB,this.x,this.y,-5,5);
@@ -94,25 +103,64 @@ var ENEMY={
   }
 };
 
+var STAR={
+  w:8,
+  h:8,
+  color:'rgba(255,255,0,0.5)',
+  speed:10,
+  init:function(){
+    this.x=Math.random()*app.WIDTH;
+    this.y=-this.h;
+    this.speed=10+Math.random()*10;
+  },
+  update:function(age){
+    this.y += this.speed;
+    if (this.y > app.HEIGHT){
+      this.stop();
+    }
+  },
+};
+
 var APP = {
   WIDTH: 320,
   HEIGHT: 500,
+  is_click:false,
+  mx:0,
+  my:0,
   init: function(){
     this.player=new unitaro.Task(PLAYER,this.WIDTH/2,400);
-    this.enemy=new unitaro.Task(ENEMY,this.WIDTH/4,100);
-    this.enemy=new unitaro.Task(ENEMY,this.WIDTH/2,100);
-    this.enemy=new unitaro.Task(ENEMY,this.WIDTH*3/4,100);
   },
   update: function(age){
     unitaro.dib.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
     unitaro.dib.box(10,10,this.WIDTH-20,this.HEIGHT-20,"rgb(0,0,0)");
-    unitaro.dib.textout(50,20,"Shooter sample","yellow",100);
+    unitaro.dib.textout(50,20,"Shoot'em up sample","yellow",100);
 
     unitaro.TaskManager.hitcheck_all("tama","enemy");
+
+    if (age%8==0){
+      new unitaro.Task(STAR);
+    }
+    if (age%8==0){
+      new unitaro.Task(TAMA,this.player.x,this.player.y);
+    }
+    if (this.is_click){
+	    if (this.mx<app.WIDTH/2){
+	      this.player.x-=5;
+	    }else{
+	      this.player.x+=5;
+	    }
+    }
+    if (age%30==1){
+      new unitaro.Task(ENEMY);
+    }
   },
   onclick: function(x,y){
-console.dir("onclick");
-    var tama=new unitaro.Task(TAMA,this.player.x,this.player.y);
+    this.is_click=true;
+    this.mx=x;
+    this.my=y;
+  },
+  onclickend: function(x,y){
+    this.is_click=false;
   }
 };
 

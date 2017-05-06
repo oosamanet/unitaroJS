@@ -1,0 +1,154 @@
+<html>
+<head>
+<meta charset="utf-8">
+<title>UNITAROjs</title>
+<meta name="viewport" content="width=device-width,user-scalable=no" />
+<script src="js/unitaro.js"></script>
+</head>
+<body>
+<script>
+
+var TitleScene={
+  init:function(){
+  },
+  update:function(){
+    unitaro.dib.textout(150,220,"Frogger sample","#f88",100);
+    unitaro.dib.textout(150,320,"Click to Start","#f88",100);
+  },
+  onclick:function(){
+    app.stage=1;
+    app.score=0;
+    unitaro.TaskManager.clear();
+    new unitaro.Task(GameScene);
+  }
+};
+
+var GameScene={
+  init:function(){
+    this.player=new unitaro.Task(PLAYER);
+    new unitaro.Task(ENEMY,50,8.5,"purple",150);
+    new unitaro.Task(ENEMY,90,7.5,"yellow",130);
+    new unitaro.Task(ENEMY,150,5.5,"cyan",260);
+    new unitaro.Task(ENEMY,250,4.5,"#f0f",200);
+    new unitaro.Task(ENEMY,310,3.5,"#f0f",200);
+    new unitaro.Task(ENEMY,370,3.0,"#f0f",200);
+  },
+  draw:function(){
+    unitaro.dib.drawsprite("tree",0,0);
+  },
+  update:function(){
+    unitaro.TaskManager.hitcheck_all("player","enemy");
+    unitaro.dib.textout(150,100,"SCORE"+app.score,"white",100);
+    if (!this.player.live){
+	    unitaro.TaskManager.clear();
+	    new unitaro.Task(GameOverScene);
+	}
+  },
+  onclick:function(){
+    unitaro.sound.play("se");
+    this.player.y-=this.player.h;
+    app.score++;
+    if (this.player.y<0){
+	    unitaro.TaskManager.clear();
+	    new unitaro.Task(ResultScene);
+	}
+  }
+};
+
+var ResultScene={
+  init:function(){
+  },
+  update:function(){
+    unitaro.dib.textout(150,220,"Stage "+app.stage+" clear","white",100);
+    unitaro.dib.textout(150,270,"Score: "+app.score,100);
+    unitaro.dib.textout(150,370,"Click to Continue","white",100);
+  },
+  onclick:function(){
+    console.dir("hoge");
+    app.stage++;
+    unitaro.TaskManager.clear();
+    new unitaro.Task(GameScene);
+  }
+};
+
+var GameOverScene={
+  init:function(){
+  },
+  update:function(){
+    unitaro.dib.textout(150,220,"GAME OVER "+app.stage+" clear","white",100);
+    unitaro.dib.textout(150,270,"Score: "+app.score,100);
+    unitaro.dib.textout(150,370,"Click to Continue","white",100);
+  },
+  onclick:function(){
+    unitaro.TaskManager.clear();
+    new unitaro.Task(TitleScene);
+  }
+};
+
+var Button={
+  init:function(x,y,str){
+    this.x=x;
+    this.y=y;
+    this.str=str;
+  },
+  update:function(){
+  },
+  onclick:function(){
+  }
+};
+
+var PLAYER={
+  w:20,
+  h:20,
+  color:'red',
+  init:function(){
+    this.x=app.WIDTH/2;
+    this.y=app.HEIGHT-this.h;
+    this.set_type("player");
+  },
+  update:function(age){
+  },
+};
+
+var ENEMY={
+  w:20,
+  h:40,
+  color:'red',
+  init:function(y,speed,color,w){
+    this.set_type("enemy");
+    this.x=app.WIDTH+this.w/2;
+    this.y=y;
+    this.w=w;
+    this.color=color;
+    this.speed=speed;
+  },
+  update:function(age){
+    this.x-=this.speed;
+    if (this.x<-this.w/2){
+      this.x=app.WIDTH+this.w/2;
+    }
+  },
+};
+
+var APP = {
+  WIDTH: 320,
+  HEIGHT: 500,
+  init: function(){
+    unitaro.ResourceManager.load({se:"audio/button01a.mp3",tree:"images/tree.png"});
+    new unitaro.Task(TitleScene);
+  },
+  update: function(age){
+    unitaro.dib.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
+    unitaro.dib.textout(50,20,"Stage sample","yellow",100);
+  },
+  onclick: function(x,y){
+  }
+};
+
+window.addEventListener('load',function(){
+	window.app = new unitaro.App(APP);
+},false);
+
+</script>
+</body>
+</html>
