@@ -8,11 +8,112 @@ body{
   margin: 0px;
   padding: 0px;
 }
+#canvas-area{
+float:left;
+margin-right: 10px;
+}
+#code-area{
+}
+.code-template{
+ display:none;
+}
 </style>
 <script src="js/unitaro.js"></script>
 </head>
 <body>
+<div class="code-template">
+<div id="A" class="code">{ /* STEP1 - Taskを移動してみる */
+ x:0,
+ y:200,
+ w:50,
+ h:30,
+ color:'orange',
+ init:function(){
+ },
+ update:function(age){
+/*
+ ここに書いた処理は１秒に２０回実行されます
+
+ヒント:
+
+右に移動する -> this.x=this.x+1
+下に移動する -> this.y=this.y+1;
+*/
+  //＊＊ここに書く＊＊
+  this.x+=4;
+  this.y+=2;
+ },
+}
+</div>
+<div id="B" class="code">{
+ x:0,
+ y:100,
+ w:50,
+ h:30,
+ color:'#f88',
+ init:function(){
+ },
+ update:function(age){
+/*
+ ここに書いた処理は１秒に２０回実行されます
+
+ヒント:
+
+右に移動する -> this.x=this.x+1
+下に移動する -> this.y=this.y+1;
+*/
+  //＊＊ここに書く＊＊
+  this.x+=8;
+  this.y+=4;
+ },
+}
+</div>
+<div id="C" class="code">{
+ x:0,
+ y:200,
+ w:50,
+ h:30,
+ seq:0,
+ color:'#f88',
+ init:function(){
+ },
+ update:function(age){
+/*
+ ここに書いた処理は１秒に２０回実行されます
+*/
+  if (this.seq==0){
+    this.x+=8;
+    if (this.x > app.player.x){
+      this.seq=1;
+    }
+  }else{
+   this.x-=8;
+  }
+  this.y+=4;
+ },
+}
+</div>
+</div>
 <script>
+
+function load(){
+  var list=document.getElementsByClassName('code');
+  
+  var elm=document.getElementById('template');
+  var tmp=list[elm.value].innerText;
+  if (tmp!=""){
+    var out=document.getElementById('code');
+    out.value=tmp;
+  }
+}
+
+function go(){
+  var elm=document.getElementById('code');
+  var obj=new Function('return ' + elm.value)();
+console.dir(obj);
+  var task=new unitaro.Task(obj,0,0);
+  task.set_type('enemy');
+}
 
 var PLAYER={
   w:30,
@@ -38,7 +139,6 @@ var TAMA={
     this.set_type("tama");
   },
   update:function(age){
-console.dir("TAMA "+this.x+":"+this.y);
     this.y -= this.speed;
     if (this.y < 0){
       this.stop();
@@ -127,6 +227,7 @@ var APP = {
   is_click:false,
   mx:0,
   my:0,
+  target:'canvas-area',
   init: function(){
     this.player=new unitaro.Task(PLAYER,this.WIDTH/2,400);
   },
@@ -140,9 +241,6 @@ var APP = {
     if (age%8==0){
       new unitaro.Task(STAR);
     }
-    if (age%8==0){
-      new unitaro.Task(TAMA,this.player.x,this.player.y);
-    }
     if (this.is_click){
 	    if (this.mx<app.WIDTH/2){
 	      this.player.x-=5;
@@ -150,14 +248,17 @@ var APP = {
 	      this.player.x+=5;
 	    }
     }
-    if (age%30==1){
-      new unitaro.Task(ENEMY);
+    if (app.enemyflag.checked){
+      if (age%30==1){
+        new unitaro.Task(ENEMY);
+      }
     }
   },
   onclick: function(x,y){
     this.is_click=true;
     this.mx=x;
     this.my=y;
+    new unitaro.Task(TAMA,this.player.x,this.player.y);
   },
   onclickend: function(x,y){
     this.is_click=false;
@@ -166,8 +267,26 @@ var APP = {
 
 window.addEventListener('load',function(){
 	window.app = new unitaro.App(APP);
+    load();
+    app.enemyflag = document.getElementById('enemyflag_on');
+    app.enemyflag.checked=true;
 },false);
 
 </script>
+<div id="canvas-area"></div>
+<div id="code-area">
+■OPTION:<br />
+敵出現 <input type="radio" name="enemyflag" value="1" id="enemyflag_on">ON <input type="radio" name="enemyflag" value="0" id="enemyflag_off">OFF<br />
+<br />
+■CODE:<br />
+<select id="template">
+<option value="0">A:右下に移動する敵
+<option value="1">B:敵Aの速い版
+<option value="2">C:自機と同じX座標まで来たら引き返す
+</select>
+<button onclick="load()">サンプルをロード</button><br />
+<textarea id="code" cols="60" rows="25"></textarea><br />
+<button onclick="go()">GO</button>
+</div>
 </body>
 </html>
