@@ -14,6 +14,10 @@ margin-right: 10px;
 }
 #code-area{
 }
+.codepanel{
+  float: left;
+  margin-right: 10px;
+}
 .code-template{
  display:none;
 }
@@ -93,24 +97,46 @@ margin-right: 10px;
  },
 }
 </div>
+<div id="D" class="code">{
+ x:150,
+ y:-40,
+ w:90,
+ h:30,
+ seq:0,
+ color:'#0ff',
+ init:function(){
+   this.x = 150;
+   this.y = -40;
+   this.centerx=this.x;
+ },
+ update:function(age){
+/*
+ ここに書いた処理は１秒に２０回実行されます
+*/
+   this.x = this.centerx + 40*Math.sin(age/40*2*Math.PI);
+   
+  this.y+=4;
+ },
+}
+</div>
 </div>
 <script>
 
-function load(){
+function load(id){
   var list=document.getElementsByClassName('code');
   
-  var elm=document.getElementById('template');
+  var elm=document.getElementById('template'+id);
   var tmp=list[elm.value].innerText;
   if (tmp!=""){
-    var out=document.getElementById('code');
+    var out=document.getElementById('code'+id);
     out.value=tmp;
   }
 }
 
-function go(){
-  var elm=document.getElementById('code');
+function go(id){
+  var elm=document.getElementById('code'+id);
   var obj=new Function('return ' + elm.value)();
-console.dir(obj);
+
   var task=new unitaro.Task(obj,0,0);
   task.set_type('enemy');
 }
@@ -255,6 +281,9 @@ var APP = {
     }
   },
   onclick: function(x,y){
+    if (x > app.WIDTH){
+      return;
+    }
     this.is_click=true;
     this.mx=x;
     this.my=y;
@@ -267,26 +296,42 @@ var APP = {
 
 window.addEventListener('load',function(){
 	window.app = new unitaro.App(APP);
-    load();
+    load(1);
+    load(2);
     app.enemyflag = document.getElementById('enemyflag_on');
-    app.enemyflag.checked=true;
+    app.enemyflag.checked=false;
 },false);
 
 </script>
 <div id="canvas-area"></div>
 <div id="code-area">
 ■OPTION:<br />
-敵出現 <input type="radio" name="enemyflag" value="1" id="enemyflag_on">ON <input type="radio" name="enemyflag" value="0" id="enemyflag_off">OFF<br />
+敵出現 <input type="radio" name="enemyflag" value="1" id="enemyflag_on">ON <input type="radio" name="enemyflag" value="0" id="enemyflag_off" checked="checked">OFF<br />
 <br />
 ■CODE:<br />
-<select id="template">
-<option value="0">A:右下に移動する敵
-<option value="1">B:敵Aの速い版
-<option value="2">C:自機と同じX座標まで来たら引き返す
-</select>
-<button onclick="load()">サンプルをロード</button><br />
-<textarea id="code" cols="60" rows="25"></textarea><br />
-<button onclick="go()">GO</button>
+<div class="codepanel">
+ <select id="template1">
+ <option value="0">A:右下に移動する敵
+ <option value="1">B:敵Aの速い版
+ <option value="2">C:自機と同じX座標まで来たら引き返す
+ <option value="3">D:三角関数の波のような移動
+ </select>
+ <button onclick="load(1)">LOAD</button><br />
+ <textarea id="code1" cols="50" rows="25"></textarea><br />
+ <button onclick="go(1)">GO</button>
+ </div>
+</div>
+<div class="codepanel">
+ <select id="template2">
+ <option value="0">A:右下に移動する敵
+ <option value="1" selected>B:敵Aの速い版
+ <option value="2">C:自機と同じX座標まで来たら引き返す
+ <option value="3">D:三角関数の波のような移動
+ </select>
+ <button onclick="load(2)">LOAD</button><br />
+ <textarea id="code2" cols="50" rows="25"></textarea><br />
+ <button onclick="go(2)">GO</button>
+ </div>
 </div>
 </body>
 </html>
