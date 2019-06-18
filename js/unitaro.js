@@ -355,6 +355,18 @@ unitaro.Task.prototype={
   clear: function(){
     unitaro.TaskManager.clear();
   },
+  movedir: function(dir,speed){
+    var rad=Math.PI*dir/180.0;
+    this.x += speed * Math.cos(rad);
+    this.y += speed * Math.sin(rad);
+  },
+  calcdir: function(tx,ty){
+    var rad=Math.atan2(ty-this.y,tx-this.x);
+    if (rad===NaN){
+      return 0;
+    }
+    return 180.0*rad/Math.PI;
+  },
   onhit: function(){
     console.dir("BOMB "+this.type+" "+this.x+","+this.y);
     this.stop();
