@@ -65,7 +65,7 @@ var MISSILE1 = {
   w: 32,
   h: 50,
   color: '#ff8888',
-  init: function(x,y,speed){
+  init: function(x,y,dir,speed){
     this.x=x;
     this.y=y;
     this.dir=dir;
@@ -85,7 +85,7 @@ var MISSILE2 = {
   w: 16,
   h: 40,
   color: '#cc4444',
-  init: function(x,y,speed){
+  init: function(x,y,dir,speed){
     this.x=x;
     this.y=y;
     this.dir=dir;
