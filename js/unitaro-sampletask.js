@@ -73,9 +73,9 @@ var MISSILE1 = {
   },
   update: function(age){
     if (age>20){
-      new unitaro.Task(MISSLE2,this.x,this.y,this.dir-20,this.speed);
-      new unitaro.Task(MISSLE2,this.x,this.y,this.dir,this.speed);
-      new unitaro.Task(MISSLE2,this.x,this.y,this.dir+20,this.speed);
+      new unitaro.Task(MISSILE2,this.x,this.y,this.dir-20,this.speed);
+      new unitaro.Task(MISSILE2,this.x,this.y,this.dir,this.speed);
+      new unitaro.Task(MISSILE2,this.x,this.y,this.dir+20,this.speed);
       this.stop();
     }
     this.movedir(this.dir,this.speed);
@@ -89,13 +89,13 @@ var MISSILE2 = {
     this.x=x;
     this.y=y;
     this.dir=dir;
-    this.speed=speed+1;
+    this.speed=speed+4;
   },
   update: function(age){
     if (age>20){
-      new unitaro.Task(DIRTAMA,this.x,this.y,this.dir-20,this.speed);
-      new unitaro.Task(DIRTAMA,this.x,this.y,this.dir,this.speed);
-      new unitaro.Task(DIRTAMA,this.x,this.y,this.dir+20,this.speed);
+      new unitaro.Task(DIRTAMA,this.x,this.y,this.dir-20,this.speed+4);
+      new unitaro.Task(DIRTAMA,this.x,this.y,this.dir,this.speed+4);
+      new unitaro.Task(DIRTAMA,this.x,this.y,this.dir+20,this.speed+4);
       this.stop();
     }
     this.movedir(this.dir,this.speed);
