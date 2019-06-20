@@ -14,10 +14,7 @@ var PTAMA = {
     this.y=y;
   },
   update: function(age){
-    this.y-=4;
-    if (this.y<0){
-      this.stop();
-    }
+    this.y-=5;
   }
 };
 
@@ -31,9 +28,21 @@ var ETAMA = {
   },
   update: function(age){
     this.y+=4;
-    if (this.y<0){
-      this.stop();
-    }
+  }
+};
+
+var DIRTAMA = {
+  w: 8,
+  h: 8,
+  color: 'yellow',
+  init: function(x,y,dir,speed){
+    this.x=x;
+    this.y=y;
+    this.dir=dir;
+    this.speed=speed;
+  },
+  update: function(age){
+    this.movedir(this.dir,this.speed);
   }
 };
 
@@ -41,17 +50,54 @@ var ETAMA_PL = {
   w: 8,
   h: 8,
   color: '#ff8888',
-  init: function(x,y){
+  init: function(x,y,speed){
     this.x=x;
     this.y=y;
     this.dir=this.calcdir(app.player.x,app.player.y);
+    this.speed=speed;
   },
   update: function(age){
-    this.dirmove(this.dir,8);
-    this.y+=4;
-    if (this.x<0 || this.x>APP.WIDTH || this.y<0 || this.y>APP.HEIGHT){
-      this.stop();
-    }
+    this.movedir(this.dir,this.speed);
   }
 };
 
+var MISSILE1 = {
+  w: 32,
+  h: 50,
+  color: '#ff8888',
+  init: function(x,y,speed){
+    this.x=x;
+    this.y=y;
+    this.dir=dir;
+    this.speed=speed;
+  },
+  update: function(age){
+    if (age>20){
+      new unitaro.Task(MISSLE2,this.x,this.y,this.dir-20,this.speed);
+      new unitaro.Task(MISSLE2,this.x,this.y,this.dir,this.speed);
+      new unitaro.Task(MISSLE2,this.x,this.y,this.dir+20,this.speed);
+      this.stop();
+    }
+    this.movedir(this.dir,this.speed);
+  }
+};
+var MISSILE2 = {
+  w: 16,
+  h: 40,
+  color: '#cc4444',
+  init: function(x,y,speed){
+    this.x=x;
+    this.y=y;
+    this.dir=dir;
+    this.speed=speed+1;
+  },
+  update: function(age){
+    if (age>20){
+      new unitaro.Task(DIRTAMA,this.x,this.y,this.dir-20,this.speed);
+      new unitaro.Task(DIRTAMA,this.x,this.y,this.dir,this.speed);
+      new unitaro.Task(DIRTAMA,this.x,this.y,this.dir+20,this.speed);
+      this.stop();
+    }
+    this.movedir(this.dir,this.speed);
+  }
+};

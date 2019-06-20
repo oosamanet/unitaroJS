@@ -206,6 +206,9 @@ unitaro.TaskManager={
       t.age++;
       var age=t.age;
       t.update(age);
+      if (!t.is_inside()){
+        t.stop();
+      }
       if (!t.live){
         delete_list.push(t);
       }
@@ -329,6 +332,10 @@ unitaro.Task=function(task){
   this.timer=0;
   this.type='';
   this.age=0;
+  this.is_inside=function(){
+    return !(this.x<-this.w || this.x>APP.WIDTH+this.w || this.y<-this.h || this.y>APP.HEIGHT+this.h);
+  };
+
   this.live=true;
   this.init=function(){};
   this.update=function(){};
