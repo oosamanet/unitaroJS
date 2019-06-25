@@ -79,9 +79,51 @@ unitaro.dib={
     }
     this.ctx.fillText(text,x1,y1,w);
   },
+  sprites: {},
+  drawsprite: function(n,x,y){
+    this.ctx.drawImage(this.sprites[n], x, y);
+  },
+  loadedcounter: 0,
+  loadcounter: 0,
   setglobaloperation: function(ope){
     this.ctx.globalCompositeOperation=ope;
+  },
+  loadimages: function(images,cb){
+    var self=this;
+    var row=Object.keys(images);
+    var name = row[self.loadcounter++];
+    var imgObj = new Image();
+    imgObj.addEventListener('load',function(){
+      self.loadedcounter++;
+      self.sprites[name]=imgObj;
+      if(row.length == self.loadedcounter){
+        if ("function" == typeof cb){
+          cb();
+        }
+      }else{
+        self.loadimages(images,cb);
+      }
+    },false);
+    imgObj.src = images[name];
   }
+};
+
+unitaro.ResourceManager={
+  res_list: {},
+  load:function(list){
+    var self=this;
+    var images={};
+    for (var i in list){
+      if (list[i].match(/.mp3/)){
+        (function(i){
+          unitaro.sound.load(list[i],function(buf){ self.res_list[i]=buf;});
+        })(i);
+      }else{
+        images[i]=list[i];
+      }
+    }
+    unitaro.dib.loadimages(images);
+  },
 };
 
 unitaro.TaskManager={
@@ -134,7 +176,7 @@ unitaro.TaskManager={
            continue;
         }
         if (typeof task2.onhit == "function"){
-          task2.onhit(task1.x,task1.y);
+          task2.onhit();
         }
         flag=true;
       }
@@ -142,7 +184,7 @@ unitaro.TaskManager={
         continue;
       }
       if (typeof task1.onhit == "function"){
-        task1.onhit(task2.x,task2.y);
+        task1.onhit();
       }
     }
   },
@@ -164,7 +206,7 @@ unitaro.TaskManager={
       t.age++;
       var age=t.age;
       t.update(age);
-      if (!t.check_outside && !t.is_inside()){
+      if (!t.is_inside()){
         t.stop();
       }
       if (!t.live){
@@ -216,8 +258,77 @@ unitaro.TaskManager={
   },
 };
 
+unitaro.sound={
+  driver:undefined,
+  init:function(){
+    if (window.AudioContext || window.webkitAudioContext){
+      this.driver=this.WebAudioDriver;
+    }else{
+      this.driver=this.AudioDriver;
+    }
+    this.driver.init();
+  },
+  load:function(url,cb){
+    if (!this.driver){
+      this.init();
+    }
+    this.driver.load(url,cb);
+  },
+  play:function(name,isloop){
+    if (!this.driver){
+      this.init();
+    }
+    this.driver.play(unitaro.ResourceManager.res_list[name],isloop);
+  },
+  AudioDriver:{
+    init:function(){
+      this.audio=new Audio("");
+    },
+    load:function(url,cb){
+      this.audio.src=url;
+      cb({duration:10});
+    },
+    play:function(buffer,isloop) {
+      this.audio.loop=isloop;
+      this.audio.play();
+    },
+  },
+  WebAudioDriver:{
+    init:function(){
+      window.AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (window.AudioContext){
+        this.context = new AudioContext();
+      }
+    },
+    load:function(url,cb){
+      var self=this;
+      var request = new XMLHttpRequest();
+      request.open('GET', url, true);
+      request.setRequestHeader('Range', 'bytes=0-');
+      request.responseType = 'arraybuffer';
+
+      request.onload = function() {
+        self.context.decodeAudioData(request.response, function(buffer) {
+          cb(buffer);
+        }, function () {
+          console.debug('error');
+        });
+      };
+
+      request.send();
+    },
+    play:function(buffer,isloop) {
+      var source = this.context.createBufferSource();
+      source.buffer = buffer;
+      source.loop=isloop;
+      source.connect(this.context.destination);
+      source.start(0);
+      return source;
+    }
+  }
+};
+
 unitaro.Task=function(task){
-  this.check_outside=true;
   this.timer=0;
   this.type='';
   this.age=0;
@@ -263,7 +374,7 @@ unitaro.Task.prototype={
     }
     return 180.0*rad/Math.PI;
   },
-  onhit: function(x,y){
+  onhit: function(){
     console.dir("BOMB "+this.type+" "+this.x+","+this.y);
     this.stop();
   }
@@ -280,6 +391,10 @@ unitaro.App=function(app){
   self.fps = self.fps || 20;
 
   unitaro.dib.init(self.WIDTH,self.HEIGHT,self.target);
+
+  if (self.assets){
+    ResourceManager.load(self.assets);
+  }
 
   var _click = (window.ontouchstart === undefined)? 'mousedown' : 'touchstart';
   window.addEventListener(_click,function(e){

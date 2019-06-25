@@ -4,13 +4,7 @@
 <title>UNITAROjs</title>
 <link id="favicon" rel="shortcut icon" src="">
 <meta name="viewport" content="width=device-width,user-scalable=no" />
-<style>
-body{
-  margin: 0px;
-  padding: 0px;
-}
-</style>
-<script src="js/unitaro.js"></script>
+<script src="../js/unitaro.js"></script>
 </head>
 <body>
 <script>
@@ -24,12 +18,12 @@ var LEFTBAR={
     this.y=y;
   },
   update:function(){
-    var y = app.ball.y - 6;
-    if (y<0){
-      y=0;
+    var y = app.ball.y;
+    if (y<this.h/2){
+      y=this.h/2;
     }
-    if (y>32-12){
-      y=32-12;
+    if (y>32-this.h/2){
+      y=32-this.h/2;
     }
 
     if (app.ball.vx<0){
@@ -52,12 +46,12 @@ var RIGHTBAR={
     this.y=y;
   },
   update:function(){
-    var y = app.ball.y - 6;
-    if (y<0){
-      y=0;
+    var y = app.ball.y;
+    if (y<this.h/2){
+      y=this.h/2;
     }
-    if (y>32-12){
-      y=32-12;
+    if (y>32-this.h/2){
+      y=32-this.h/2;
     }
 
     if (app.ball.vx>0){
@@ -83,10 +77,10 @@ var BALL={
     this.vy=1;
   },
   update:function(){
-    if (app.ball.x<=0 || app.ball.x>=28){
+    if (app.ball.x<4 || app.ball.x>28){
       this.vx = -this.vx;
     }
-    if (app.ball.y<=0 || app.ball.y>=30){
+    if (app.ball.y<4 || app.ball.y>28){
       this.vy = -this.vy;
     }
     this.x += this.vx;
@@ -98,8 +92,8 @@ var APP = {
   WIDTH: 32,
   HEIGHT: 32,
   init: function(){
-    this.leftbar=new unitaro.Task(LEFTBAR,0,0);
-    this.rightbar=new unitaro.Task(RIGHTBAR,30,20);
+    this.leftbar=new unitaro.Task(LEFTBAR,1,0);
+    this.rightbar=new unitaro.Task(RIGHTBAR,31,20);
     this.ball=new unitaro.Task(BALL,15,15);
   },
   update: function(age){
@@ -111,10 +105,6 @@ var APP = {
 };
 
 window.addEventListener('load',function(){
-  var lnk = document.createElement('link');
-  lnk.rel = 'shortcut icon';lnk.id='favicon';
-  document.querySelector('head').appendChild(lnk);
-
   window.app = new unitaro.App(APP);
 },false);
 
