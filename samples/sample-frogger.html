@@ -3,7 +3,7 @@
 <meta charset="utf-8">
 <title>UNITAROjs</title>
 <meta name="viewport" content="width=device-width,user-scalable=no" />
-<script src="js/unitaro.js"></script>
+<script src="../js/unitaro.js"></script>
 </head>
 <body>
 <script>
@@ -34,7 +34,6 @@ var GameScene={
     new unitaro.Task(ENEMY,370,3.0,"#f0f",200);
   },
   draw:function(){
-    unitaro.dib.drawsprite("tree",0,0);
   },
   update:function(){
     unitaro.TaskManager.hitcheck_all("player","enemy");
@@ -45,7 +44,6 @@ var GameScene={
 	}
   },
   onclick:function(){
-    unitaro.sound.play("se");
     this.player.y-=this.player.h;
     app.score++;
     if (this.player.y<0){
@@ -134,7 +132,6 @@ var APP = {
   WIDTH: 320,
   HEIGHT: 500,
   init: function(){
-    unitaro.ResourceManager.load({se:"audio/button01a.mp3",tree:"images/tree.png"});
     new unitaro.Task(TitleScene);
   },
   update: function(age){

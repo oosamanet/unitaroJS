@@ -3,13 +3,7 @@
 <meta charset="utf-8">
 <title>UNITAROjs</title>
 <meta name="viewport" content="width=device-width,user-scalable=no" />
-<style>
-body{
-  margin: 0px;
-  padding: 0px;
-}
-</style>
-<script src="js/unitaro.js"></script>
+<script src="../js/unitaro.js"></script>
 </head>
 <body>
 <script>
@@ -50,8 +44,8 @@ var TAMA={
 };
 
 var BOMB={
-  w:5,
-  h:5,
+  w:3,
+  h:3,
   color:'red',
   speed:3,
   init:function(x,y,xspeed,yspeed){
@@ -63,9 +57,7 @@ var BOMB={
   update:function(age){
     this.x += this.xspeed;
     this.y += this.yspeed;
-    this.w += this.speed;
-    this.h += this.speed;
-    if (age > 10){
+    if (age > 4){
       this.stop();
     }
   },
@@ -86,11 +78,11 @@ var ENEMY={
   },
   update:function(age){
   },
-  onhit:function(){
-    new unitaro.Task(BOMB,this.x,this.y,-5,-5);
-    new unitaro.Task(BOMB,this.x,this.y,5,-5);
-    new unitaro.Task(BOMB,this.x,this.y,-5,5);
-    new unitaro.Task(BOMB,this.x,this.y,5,5);
+  onhit:function(x,y){
+    new unitaro.Task(BOMB,x,y,-5,-5);
+    new unitaro.Task(BOMB,x,y,5,-5);
+    new unitaro.Task(BOMB,x,y,-5,5);
+    new unitaro.Task(BOMB,x,y,5,5);
   }
 };
 
