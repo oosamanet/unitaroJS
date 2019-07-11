@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,user-scalable=no" />
 <script src="../js/unitaro.js"></script>
 </head>
-<body>
+<body style="margin:0">
 <script>
 
 var PLAYER={
@@ -33,7 +33,7 @@ var TIMER={
     this.color="rgb(255,0,0)";
   },
   update:function(age){
-    this.x=age*20%(app.WIDTH-20);
+    this.x=age*20%(APP.WIDTH-20);
   },
 };
 
@@ -41,8 +41,8 @@ var JUMPER={
   init:function(){
     this.w=40;
     this.h=40;
-    this.x=app.WIDTH/2;
-    this.y=app.HEIGHT-this.h;
+    this.x=APP.WIDTH/2;
+    this.y=APP.HEIGHT-this.h;
     this.color="rgb(155,155,255)";
     this.tx=0;
     this.ty=0;
@@ -52,8 +52,8 @@ var JUMPER={
     this.y-=this.speed;
     this.speed-=2;
 
-    if (this.y>app.HEIGHT-this.h){
-      this.y=app.HEIGHT-this.h;
+    if (this.y>APP.HEIGHT-this.h){
+      this.y=APP.HEIGHT-this.h;
       this.speed=0;
     }
   },

@@ -5,7 +5,7 @@
   <title>sample - adventure</title>
   <script src="../js/unitaro.js"></script>
 </head>
-<body>
+<body style="margin:0">
   <script>
 
 var BUTTON={
@@ -87,7 +87,7 @@ var APP = {
   WIDTH: 320,
   HEIGHT: 500,
   init: function(){
-    app.pos='家の前';
+    this.pos='家の前';
     new unitaro.Task(ScenarioTask);
   },
   update: function(age){
@@ -99,7 +99,8 @@ var APP = {
 };
 
 window.addEventListener('load',function(){
-  window.app = new unitaro.App(APP);
+  window.app = {};
+  Object.assign(app,new unitaro.App(APP));
 },false);
 
   </script>
