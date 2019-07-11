@@ -164,7 +164,7 @@ unitaro.TaskManager={
       t.age++;
       var age=t.age;
       t.update(age);
-      if (!t.check_outside && !t.is_inside()){
+      if (app.check_outside && !t.is_inside()){
         t.stop();
       }
       if (!t.live){
@@ -217,7 +217,6 @@ unitaro.TaskManager={
 };
 
 unitaro.Task=function(task){
-  this.check_outside=true;
   this.timer=0;
   this.type='';
   this.age=0;
@@ -238,6 +237,9 @@ unitaro.Task=function(task){
   }
 
   unitaro.TaskManager.add_task(this);
+  if (this.type !== undefined){
+    this.set_type(this.type);
+  }
   this.init.apply(this,Array.prototype.slice.call(arguments,1));
 };
 unitaro.Task.prototype={
@@ -271,6 +273,7 @@ unitaro.Task.prototype={
 
 unitaro.App=function(app){
   var self=this;
+  self.check_outside=false;
   self.init = function(){};
   self.update = function(){};
   self.draw = function(){};
@@ -304,13 +307,11 @@ unitaro.App=function(app){
     }
   });
 
+  self.init();
   var age=0;
   var loop = function(){
     clearTimeout(self.timer);
     self.timer=setTimeout(function(){
-      if (age==0){
-        self.init();
-      }
       if (!self.paused){
         self.update(age);
         unitaro.TaskManager.update_all();
@@ -327,3 +328,6 @@ unitaro.App=function(app){
     unitaro.scaler(unitaro.dib.target);
   }
 };
+
+//make this object to global
+window.Task=unitaro.Task;
