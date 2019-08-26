@@ -88,11 +88,13 @@ var APP = {
   HEIGHT: 500,
   init: function(){
     this.pos='家の前';
-    new unitaro.Task(ScenarioTask);
   },
   update: function(age){
    unitaro.dib.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
     unitaro.dib.box(10,10,this.WIDTH-20,this.HEIGHT-20,"rgb(0,0,0)");
+    if (this.scenario === undefined){
+      this.scenario = new unitaro.Task(ScenarioTask);
+    }
   },
   onclick: function(x,y){
   }
