@@ -30,8 +30,8 @@ var BUTTON={
 var DIALOG_YESNO={
   init:function(str,yes,no,cbyes,cbno){
     this.str=str;
-    new unitaro.Task(BUTTON,100,300,yes,cbyes);
-    new unitaro.Task(BUTTON,250,300,no,cbno);
+    new Task(BUTTON,100,300,yes,cbyes);
+    new Task(BUTTON,250,300,no,cbno);
   },
   draw:function(){
     unitaro.dib.textout(150,150,this.str,"white",200);
@@ -43,19 +43,15 @@ var ScenarioTask = {
     if (app.pos=="家の前"){
       new unitaro.Task(DIALOG_YESNO,"あなたの前に古い家がある","入る","入らない",function(){
         app.pos="玄関";
-        unitaro.TaskManager.clear();
-        new unitaro.Task(ScenarioTask);
+        new Scene(ScenarioTask);
       },function(){
-        unitaro.TaskManager.clear();
-        new unitaro.Task(GameOverTask,"大きな石が落ちてきて、あなたは死んだ");
+        new Scene(GameOverTask,"大きな石が落ちてきて、あなたは死んだ");
       });
     }else if (app.pos=="玄関"){
-      new unitaro.Task(DIALOG_YESNO,"玄関の奥に大きなドアがある","入る","入らない",function(){
-        unitaro.TaskManager.clear();
-        new unitaro.Task(GameOverTask,"ドアの奥にはお宝があった！");
+      new Task(DIALOG_YESNO,"玄関の奥に大きなドアがある","入る","入らない",function(){
+        new Scene(GameOverTask,"ドアの奥にはお宝があった！");
       },function(){
-        unitaro.TaskManager.clear();
-        new unitaro.Task(GameOverTask,"あなたはかみなりに打たれて死んだ");
+        new Scene(GameOverTask,"あなたはかみなりに打たれて死んだ");
       });
     }
   },
@@ -78,8 +74,7 @@ var GameOverTask = {
   },
   onclick:function(){
     console.dir("GameOver:click");
-      unitaro.TaskManager.clear();
-      new unitaro.Task(ScenarioTask);
+      new Scene(ScenarioTask);
   }
 };
 
@@ -93,7 +88,7 @@ var APP = {
    unitaro.dib.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
     unitaro.dib.box(10,10,this.WIDTH-20,this.HEIGHT-20,"rgb(0,0,0)");
     if (this.scenario === undefined){
-      this.scenario = new unitaro.Task(ScenarioTask);
+      this.scenario = new Scene(ScenarioTask);
     }
   },
   onclick: function(x,y){

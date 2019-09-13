@@ -17,8 +17,7 @@ var TitleScene={
   update:function(){
   },
   onclick:function(){
-    unitaro.TaskManager.clear();
-    new unitaro.Task(GameScene);
+    new Scene(GameScene);
     console.dir("CLICKED");
   },
 };
@@ -49,8 +48,7 @@ var GameScene={
     unitaro.TaskManager.hitcheck_all("player","pipe");
 
     if (!this.player.live){
-      unitaro.TaskManager.clear();
-      new unitaro.Task(TitleScene);
+      new Scene(TitleScene);
     }
   },
   onclick:function(){

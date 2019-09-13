@@ -134,7 +134,7 @@ unitaro.TaskManager={
            continue;
         }
         if (typeof task2.onhit == "function"){
-          task2.onhit(task1.x,task1.y);
+          task2.onhit(task1.x,task1.y,task1.type);
         }
         flag=true;
       }
@@ -142,7 +142,7 @@ unitaro.TaskManager={
         continue;
       }
       if (typeof task1.onhit == "function"){
-        task1.onhit(task2.x,task2.y);
+        task1.onhit(task2.x,task2.y,task2.type);
       }
     }
   },
@@ -266,7 +266,6 @@ unitaro.Task.prototype={
     return 180.0*rad/Math.PI;
   },
   onhit: function(x,y){
-    console.dir("BOMB "+this.type+" "+this.x+","+this.y);
     this.stop();
   }
 };
@@ -331,3 +330,10 @@ unitaro.App=function(app){
 
 //make this object to global
 window.Task=unitaro.Task;
+
+unitaro.Scene=function(scene){
+  unitaro.TaskManager.clear();
+  unitaro.Task.apply(this,arguments);
+};
+Object.setPrototypeOf(unitaro.Scene.prototype,unitaro.Task.prototype);
+window.Scene=unitaro.Scene;
