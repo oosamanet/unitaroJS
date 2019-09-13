@@ -35,7 +35,7 @@ var GameScene={
   draw:function(){
   },
   update:function(){
-    TaskManager.hitcheck_all("player","enemy");
+    unitaro.TaskManager.hitcheck_all("player","enemy");
     unitaro.dib.textout(150,100,"SCORE"+app.score,"white",100);
     if (!this.player.live){
 	    new Scene(GameOverScene);
@@ -127,7 +127,7 @@ var APP = {
   WIDTH: 320,
   HEIGHT: 500,
   init: function(){
-    new Task(TitleScene);
+    new Scene(TitleScene);
   },
   update: function(age){
     unitaro.dib.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
