@@ -18,37 +18,34 @@ var TitleScene={
   onclick:function(){
     app.stage=1;
     app.score=0;
-    unitaro.TaskManager.clear();
-    new unitaro.Task(GameScene);
+    new Scene(GameScene);
   }
 };
 
 var GameScene={
   init:function(){
-    this.player=new unitaro.Task(PLAYER);
-    new unitaro.Task(ENEMY,50,8.5,"purple",150);
-    new unitaro.Task(ENEMY,90,7.5,"yellow",130);
-    new unitaro.Task(ENEMY,150,5.5,"cyan",260);
-    new unitaro.Task(ENEMY,250,4.5,"#f0f",200);
-    new unitaro.Task(ENEMY,310,3.5,"#f0f",200);
-    new unitaro.Task(ENEMY,370,3.0,"#f0f",200);
+    this.player=new Task(PLAYER);
+    new Task(ENEMY,50,8.5,"purple",150);
+    new Task(ENEMY,90,7.5,"yellow",130);
+    new Task(ENEMY,150,5.5,"cyan",260);
+    new Task(ENEMY,250,4.5,"#f0f",200);
+    new Task(ENEMY,310,3.5,"#f0f",200);
+    new Task(ENEMY,370,3.0,"#f0f",200);
   },
   draw:function(){
   },
   update:function(){
-    unitaro.TaskManager.hitcheck_all("player","enemy");
+    TaskManager.hitcheck_all("player","enemy");
     unitaro.dib.textout(150,100,"SCORE"+app.score,"white",100);
     if (!this.player.live){
-	    unitaro.TaskManager.clear();
-	    new unitaro.Task(GameOverScene);
+	    new Scene(GameOverScene);
 	}
   },
   onclick:function(){
     this.player.y-=this.player.h;
     app.score++;
     if (this.player.y<0){
-	    unitaro.TaskManager.clear();
-	    new unitaro.Task(ResultScene);
+	    new Scene(ResultScene);
 	}
   }
 };
@@ -64,8 +61,7 @@ var ResultScene={
   onclick:function(){
     console.dir("hoge");
     app.stage++;
-    unitaro.TaskManager.clear();
-    new unitaro.Task(GameScene);
+    new Scene(GameScene);
   }
 };
 
@@ -78,8 +74,7 @@ var GameOverScene={
     unitaro.dib.textout(150,370,"Click to Continue","white",100);
   },
   onclick:function(){
-    unitaro.TaskManager.clear();
-    new unitaro.Task(TitleScene);
+    new Scene(TitleScene);
   }
 };
 
@@ -132,7 +127,7 @@ var APP = {
   WIDTH: 320,
   HEIGHT: 500,
   init: function(){
-    new unitaro.Task(TitleScene);
+    new Task(TitleScene);
   },
   update: function(age){
     unitaro.dib.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");

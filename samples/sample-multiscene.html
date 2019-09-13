@@ -17,8 +17,7 @@ var TitleScene={
   update:function(){
   },
   onclick:function(){
-    unitaro.TaskManager.clear();
-    new unitaro.Task(GameScene);
+    new Scene(GameScene);
     console.dir("CLICKED");
   },
 };
@@ -39,8 +38,7 @@ var GameScene={
       this.enemy_right=new unitaro.Task(ENEMY,app.WIDTH+50,140);
     }
     if (!this.player.live){
-      unitaro.TaskManager.clear();
-      new unitaro.Task(TitleScene);
+      new Scene(TitleScene);
     }
   },
   onclick:function(x,y){
