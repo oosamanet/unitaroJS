@@ -337,3 +337,4 @@ unitaro.Scene=function(scene){
 };
 Object.setPrototypeOf(unitaro.Scene.prototype,unitaro.Task.prototype);
 window.Scene=unitaro.Scene;
+window.TaskManager=unitaro.TaskManager;
