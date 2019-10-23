@@ -134,7 +134,7 @@ unitaro.TaskManager={
            continue;
         }
         if (typeof task2.onhit == "function"){
-          task2.onhit(task1.x,task1.y,task1.type);
+          task2.onhit(task1.x,task1.y,task1.type,task1);
         }
         flag=true;
       }
@@ -142,7 +142,7 @@ unitaro.TaskManager={
         continue;
       }
       if (typeof task1.onhit == "function"){
-        task1.onhit(task2.x,task2.y,task2.type);
+        task1.onhit(task2.x,task2.y,task2.type,task2);
       }
     }
   },
@@ -163,7 +163,10 @@ unitaro.TaskManager={
       }
       t.age++;
       var age=t.age;
-      t.update(age);
+      try{
+        t.update(age);
+      }catch(e){
+      }
       if (app.check_outside && !t.is_inside()){
         t.stop();
       }
@@ -194,7 +197,10 @@ unitaro.TaskManager={
     for (var i in this.task_list){
       var t=this.task_list[i];
       if ("function" == typeof(t[mes])){
-        t[mes].apply(t,Array.prototype.slice.call(arguments,1));
+        try{
+          t[mes].apply(t,Array.prototype.slice.call(arguments,1));
+        }catch(e){
+        }
       }
     }
 
@@ -240,7 +246,10 @@ unitaro.Task=function(task){
   if (this.type !== undefined){
     this.set_type(this.type);
   }
-  this.init.apply(this,Array.prototype.slice.call(arguments,1));
+  try{
+    this.init.apply(this,Array.prototype.slice.call(arguments,1));
+  }catch(e){
+  }
 };
 unitaro.Task.prototype={
   stop: function(){
@@ -282,6 +291,11 @@ unitaro.App=function(app){
   self.fps = self.fps || 20;
 
   unitaro.dib.init(self.WIDTH,self.HEIGHT,self.target);
+
+  if (self.res && unitaro.ResourceManager){
+    unitaro.ResourceManager.load(self.res);
+    window.Sound = unitaro.sound;
+  }
 
   var _click = (window.ontouchstart === undefined)? 'mousedown' : 'touchstart';
   window.addEventListener(_click,function(e){
