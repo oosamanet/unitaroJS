@@ -6,7 +6,7 @@ oosamanet@gmail.com
 
 */
 unitaro.dib.sprites={};
-unitaro.dib.drawsprite: function(n,x,y){
+unitaro.dib.drawsprite=function(n,x,y){
     this.ctx.drawImage(this.sprites[n], x, y);
 };
 unitaro.dib.loadedcounter=0;
