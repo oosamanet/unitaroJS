@@ -10,7 +10,7 @@
 
 var BUTTON={
   w:120,
-  h:20,
+  h:40,
   color:'#ccc',
   init:function(x,y,str,cb){
     this.x=x;
@@ -22,8 +22,8 @@ var BUTTON={
     this.cb();
   },
   draw:function(){
-    unitaro.dib.box(this.x-this.w/2,this.y-this.h/2,this.w,this.h,this.color);
-    unitaro.dib.textout(this.x,this.y+4,this.str,"blue",100);
+    Canvas.box(this.x-this.w/2,this.y-this.h/2,this.w,this.h,this.color);
+    Canvas.textout(this.x,this.y+8,this.str,"blue",100);
   },
 };
 
@@ -34,7 +34,7 @@ var DIALOG_YESNO={
     new Task(BUTTON,250,300,no,cbno);
   },
   draw:function(){
-    unitaro.dib.textout(150,150,this.str,"white",200);
+    Canvas.textout(150,150,this.str,"white",200);
   },
 };
 
@@ -58,7 +58,7 @@ var ScenarioTask = {
   moveto:function(to){
   },
   draw:function(){
-    unitaro.dib.textout(150,100,"いまいる場所："+app.pos,"yellow",200);
+    Canvas.textout(150,100,"いまいる場所："+app.pos,"yellow",200);
   },
   update:function(){
   }
@@ -70,7 +70,7 @@ var GameOverTask = {
     this.mes=mes;
   },
   draw:function(){
-    unitaro.dib.textout(150,150,this.mes,"white",200);
+    Canvas.textout(150,150,this.mes,"white",200);
   },
   onclick:function(){
     console.dir("GameOver:click");
@@ -82,22 +82,20 @@ var APP = {
   WIDTH: 320,
   HEIGHT: 500,
   init: function(){
+    Canvas.setFont("24px bold");
     this.pos='家の前';
+    this.scenario = new Scene(ScenarioTask);
   },
   update: function(age){
-   unitaro.dib.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
-    unitaro.dib.box(10,10,this.WIDTH-20,this.HEIGHT-20,"rgb(0,0,0)");
-    if (this.scenario === undefined){
-      this.scenario = new Scene(ScenarioTask);
-    }
+    Canvas.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
+    Canvas.box(10,10,this.WIDTH-20,this.HEIGHT-20,"rgb(0,0,0)");
   },
   onclick: function(x,y){
   }
 };
 
 window.addEventListener('load',function(){
-  window.app = {};
-  Object.assign(app,new unitaro.App(APP));
+  window.app = new unitaro.App(APP);
 },false);
 
   </script>

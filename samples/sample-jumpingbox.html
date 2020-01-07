@@ -12,7 +12,7 @@ var TitleScene={
   init:function(){
   },
   draw:function(){
-    unitaro.dib.textout(150,200,"CLICK TO START",100);
+    Canvas.textout(150,200,"CLICK TO START",100);
   },
   update:function(){
   },
@@ -24,7 +24,7 @@ var TitleScene={
 
 var GameScene={
   init:function(){
-    this.player=new unitaro.Task(PLAYER,app.WIDTH/2,400);
+    this.player=new Task(PLAYER,app.WIDTH/2,400);
   },
   draw:function(){
   },
@@ -34,18 +34,18 @@ var GameScene={
     var top_pipe_length = Math.round(y_ground * pipe_margin_position - app.pipe_margin / 2);
     var bottom_pipe_length = Math.round(y_ground * (1 - pipe_margin_position) - app.pipe_margin / 2);
 
-    var top_pipe = new unitaro.Task(PIPE,top_pipe_length/2,top_pipe_length);
+    var top_pipe = new Task(PIPE,top_pipe_length/2,top_pipe_length);
     var y=top_pipe_length + app.pipe_margin;
     var h=bottom_pipe_length;
-    var bottom_pipe = new unitaro.Task(PIPE,y+h/2,h);
+    var bottom_pipe = new Task(PIPE,y+h/2,h);
   },
   update:function(age){
-    unitaro.dib.box(0,app.HEIGHT-app.ground_height,app.WIDTH,app.ground_height,'#800');
+    Canvas.box(0,app.HEIGHT-app.ground_height,app.WIDTH,app.ground_height,'#800');
 
     if (age%40==0){
       this.create_pipe(Math.random());
     }
-    unitaro.TaskManager.hitcheck_all("player","pipe");
+    app.hitcheck_all("player","pipe");
 
     if (!this.player.live){
       new Scene(TitleScene);
@@ -133,18 +133,18 @@ var APP = {
   "pipe_margin" : 90,
   "first_pipe_x" : 300,
   init: function(){
-    new unitaro.Task(TitleScene);
+    new Task(TitleScene);
   },
   update: function(age){
-    unitaro.dib.box(0,0,this.WIDTH,this.HEIGHT,"rgb(0,0,0)");
-    unitaro.dib.textout(50,20,"Multi Scene sample","yellow",100);
+    Canvas.box(0,0,this.WIDTH,this.HEIGHT,"rgb(0,0,0)");
+    Canvas.textout(50,20,"Multi Scene sample","yellow",100);
   },
   onclick:function(x,y){
   },
 };
 
 window.addEventListener('load',function(){
-	window.app = new unitaro.App(APP);
+	window.app = new App(APP);
 },false);
 
 </script>

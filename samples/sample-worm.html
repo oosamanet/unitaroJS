@@ -32,7 +32,7 @@ var WormHead1 = {
     this.set_type("enemy");
     target=this;
     for (var i=0;i<30;i++){
-      target=new unitaro.Task(WormTail1,target);
+      target=new Task(WormTail1,target);
     }
   },
   update:function(age){
@@ -83,7 +83,7 @@ var WormHead2 = {
     this.set_type("enemy");
     target=this;
     for (var i=0;i<30;i++){
-      target=new unitaro.Task(WormTail2,target);
+      target=new Task(WormTail2,target);
     }
   },
   update:function(age){
@@ -145,7 +145,7 @@ var WormHead3 = {
     this.set_type("enemy");
     target=this;
     for (var i=0;i<30;i++){
-      target=new unitaro.Task(WormTail3,target);
+      target=new Task(WormTail3,target);
     }
   },
   update:function(age){
@@ -198,15 +198,15 @@ var APP = {
   WIDTH: 320,
   HEIGHT: 500,
   init: function(){
-    this.target=new unitaro.Task(TARGET,160,240);
-    this.worm=new unitaro.Task(WormHead1,this.target,-50,480);
-    this.worm=new unitaro.Task(WormHead2,this.target,400,470);
-    this.worm=new unitaro.Task(WormHead3,this.target,400,170);
+    this.target=new Task(TARGET,160,240);
+    this.worm=new Task(WormHead1,this.target,-50,480);
+    this.worm=new Task(WormHead2,this.target,400,470);
+    this.worm=new Task(WormHead3,this.target,400,170);
   },
   update: function(age){
-    unitaro.dib.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
-    unitaro.dib.box(10,10,this.WIDTH-20,this.HEIGHT-20,"rgb(0,0,0)");
-    unitaro.dib.textout(50,20,"Worm sample","yellow",100);
+    Canvas.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
+    Canvas.box(10,10,this.WIDTH-20,this.HEIGHT-20,"rgb(0,0,0)");
+    Canvas.textout(50,20,"Worm sample","yellow",100);
   },
   onclick: function(x,y){
     this.target.x=x;
@@ -215,7 +215,7 @@ var APP = {
 };
 
 window.addEventListener('load',function(){
-	window.app = new unitaro.App(APP);
+	window.app = new App(APP);
 },false);
 
 </script>

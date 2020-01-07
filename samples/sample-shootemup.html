@@ -138,7 +138,7 @@ function go(id){
   var elm=document.getElementById('code'+id);
   var obj=new Function('return ' + elm.value)();
 
-  var task=new unitaro.Task(obj,0,0);
+  var task=new Task(obj,0,0);
   task.set_type('enemy');
 }
 
@@ -223,10 +223,10 @@ var ENEMY={
   },
   onhit:function(){
     this.stop();
-    new unitaro.Task(BOMB,this.x,this.y,-5,-5);
-    new unitaro.Task(BOMB,this.x,this.y,5,-5);
-    new unitaro.Task(BOMB,this.x,this.y,-5,5);
-    new unitaro.Task(BOMB,this.x,this.y,5,5);
+    new Task(BOMB,this.x,this.y,-5,-5);
+    new Task(BOMB,this.x,this.y,5,-5);
+    new Task(BOMB,this.x,this.y,-5,5);
+    new Task(BOMB,this.x,this.y,5,5);
   }
 };
 
@@ -256,17 +256,17 @@ var APP = {
   my:0,
   target:'canvas-area',
   init: function(){
-    this.player=new unitaro.Task(PLAYER,this.WIDTH/2,400);
+    this.player=new Task(PLAYER,this.WIDTH/2,400);
   },
   update: function(age){
-    unitaro.dib.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
-    unitaro.dib.box(10,10,this.WIDTH-20,this.HEIGHT-20,"rgb(0,0,0)");
-    unitaro.dib.textout(50,20,"Shoot'em up sample","yellow",100);
+    Canvas.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
+    Canvas.box(10,10,this.WIDTH-20,this.HEIGHT-20,"rgb(0,0,0)");
+    Canvas.textout(50,20,"Shoot'em up sample","yellow",100);
 
-    unitaro.TaskManager.hitcheck_all("tama","enemy");
+    app.hitcheck_all("tama","enemy");
 
     if (age%8==0){
-      new unitaro.Task(STAR);
+      new Task(STAR);
     }
     if (this.is_click){
 	    if (this.mx<app.WIDTH/2){
@@ -277,7 +277,7 @@ var APP = {
     }
     if (app.enemyflag.checked){
       if (age%30==1){
-        new unitaro.Task(ENEMY);
+        new Task(ENEMY);
       }
     }
   },
@@ -288,7 +288,7 @@ var APP = {
     this.is_click=true;
     this.mx=x;
     this.my=y;
-    new unitaro.Task(TAMA,this.player.x,this.player.y);
+    new Task(TAMA,this.player.x,this.player.y);
   },
   onclickend: function(x,y){
     this.is_click=false;
@@ -296,7 +296,7 @@ var APP = {
 };
 
 window.addEventListener('load',function(){
-	window.app = new unitaro.App(APP);
+	window.app = new App(APP);
     load(1);
     load(2);
     app.enemyflag = document.getElementById('enemyflag_on');

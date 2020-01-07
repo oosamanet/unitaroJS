@@ -21,7 +21,7 @@ var FIRE={
     this.y -= this.speed;
     if (this.y < this.target){
       for (var i=0;i<16;i++){
-	    new unitaro.Task(FIRE_SUB,this.x,this.y,i*360/16);
+	    new Task(FIRE_SUB,this.x,this.y,i*360/16);
       }
       this.stop();
     }
@@ -58,20 +58,20 @@ var APP = {
   init: function(){
   },
   update: function(age){
-    unitaro.dib.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
-    unitaro.dib.box(10,10,this.WIDTH-20,this.HEIGHT-20,"rgb(0,0,0)");
-    unitaro.dib.textout(50,20,"Fireworks sample","yellow",100);
+    Canvas.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
+    Canvas.box(10,10,this.WIDTH-20,this.HEIGHT-20,"rgb(0,0,0)");
+    Canvas.textout(50,20,"Fireworks sample","yellow",100);
   },
   onclick: function(x,y){
     var self=this;
     //クリックされた時に呼ばれる関数
-    this.fire=new unitaro.Task(FIRE,x,app.HEIGHT);
+    this.fire=new Task(FIRE,x,app.HEIGHT);
     this.fire.target = y;
   }
 };
 
 window.addEventListener('load',function(){
-	window.app = new unitaro.App(APP);
+	window.app = new App(APP);
 },false);
 
 </script>

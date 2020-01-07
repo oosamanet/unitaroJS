@@ -27,18 +27,18 @@ var APP = {
   WIDTH: 320,
   HEIGHT: 500,
   init: function(){
-    this.player=new unitaro.Task(PLAYER,100,100);
+    this.player=new Task(PLAYER,100,100);
   },
   update: function(age){
-    unitaro.dib.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
-    unitaro.dib.textout(50,20,"minimum sample","yellow",100);
+    Canvas.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
+    Canvas.textout(50,20,"minimum sample","yellow",100);
   },
   onclick: function(x,y){
   }
 };
 
 window.addEventListener('load',function(){
-	window.app = new unitaro.App(APP);
+	window.app = new App(APP);
 },false);
 
 </script>

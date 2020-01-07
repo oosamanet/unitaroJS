@@ -67,14 +67,14 @@ var APP = {
   HEIGHT: 500,
   
   init: function(){
-    this.player=new unitaro.Task(PLAYER,0,0);
-    this.jumper=new unitaro.Task(JUMPER);
-    this.timer=new unitaro.Task(TIMER);
+    this.player=new Task(PLAYER,0,0);
+    this.jumper=new Task(JUMPER);
+    this.timer=new Task(TIMER);
   },
   update: function(age){
-    unitaro.dib.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,255)");
-    unitaro.dib.box(10,10,this.WIDTH-20,this.HEIGHT-20,"rgb(80,80,255)");
-    unitaro.dib.textout(50,20,"jumper sample","yellow",100);
+    Canvas.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,255)");
+    Canvas.box(10,10,this.WIDTH-20,this.HEIGHT-20,"rgb(80,80,255)");
+    Canvas.textout(50,20,"jumper sample","yellow",100);
   },
   onclick: function(x,y){
     this.player.tx=x;
@@ -83,7 +83,7 @@ var APP = {
 };
 
 window.addEventListener('load',function(){
-	window.app = new unitaro.App(APP);
+	window.app = new App(APP);
 },false);
 
 </script>

@@ -12,8 +12,8 @@ var TitleScene={
   init:function(){
   },
   update:function(){
-    unitaro.dib.textout(150,220,"Frogger sample","#f88",100);
-    unitaro.dib.textout(150,320,"Click to Start","#f88",100);
+    Canvas.textout(150,220,"Frogger sample","#f88",100);
+    Canvas.textout(150,320,"Click to Start","#f88",100);
   },
   onclick:function(){
     app.stage=1;
@@ -35,8 +35,8 @@ var GameScene={
   draw:function(){
   },
   update:function(){
-    unitaro.TaskManager.hitcheck_all("player","enemy");
-    unitaro.dib.textout(150,100,"SCORE"+app.score,"white",100);
+    app.hitcheck_all("player","enemy");
+    Canvas.textout(150,100,"SCORE"+app.score,"white",100);
     if (!this.player.live){
 	    new Scene(GameOverScene);
 	}
@@ -54,9 +54,9 @@ var ResultScene={
   init:function(){
   },
   update:function(){
-    unitaro.dib.textout(150,220,"Stage "+app.stage+" clear","white",100);
-    unitaro.dib.textout(150,270,"Score: "+app.score,100);
-    unitaro.dib.textout(150,370,"Click to Continue","white",100);
+    Canvas.textout(150,220,"Stage "+app.stage+" clear","white",100);
+    Canvas.textout(150,270,"Score: "+app.score,100);
+    Canvas.textout(150,370,"Click to Continue","white",100);
   },
   onclick:function(){
     console.dir("hoge");
@@ -69,9 +69,9 @@ var GameOverScene={
   init:function(){
   },
   update:function(){
-    unitaro.dib.textout(150,220,"GAME OVER "+app.stage+" clear","white",100);
-    unitaro.dib.textout(150,270,"Score: "+app.score,100);
-    unitaro.dib.textout(150,370,"Click to Continue","white",100);
+    Canvas.textout(150,220,"GAME OVER "+app.stage+" clear","white",100);
+    Canvas.textout(150,270,"Score: "+app.score,100);
+    Canvas.textout(150,370,"Click to Continue","white",100);
   },
   onclick:function(){
     new Scene(TitleScene);
@@ -130,15 +130,15 @@ var APP = {
     new Scene(TitleScene);
   },
   update: function(age){
-    unitaro.dib.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
-    unitaro.dib.textout(50,20,"Stage sample","yellow",100);
+    Canvas.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
+    Canvas.textout(50,20,"Stage sample","yellow",100);
   },
   onclick: function(x,y){
   }
 };
 
 window.addEventListener('load',function(){
-	window.app = new unitaro.App(APP);
+	window.app = new App(APP);
 },false);
 
 </script>
