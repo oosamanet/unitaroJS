@@ -92,20 +92,20 @@ var APP = {
   WIDTH: 32,
   HEIGHT: 32,
   init: function(){
-    this.leftbar=new unitaro.Task(LEFTBAR,1,0);
-    this.rightbar=new unitaro.Task(RIGHTBAR,31,20);
-    this.ball=new unitaro.Task(BALL,15,15);
+    this.leftbar=new Task(LEFTBAR,1,0);
+    this.rightbar=new Task(RIGHTBAR,31,20);
+    this.ball=new Task(BALL,15,15);
   },
   update: function(age){
-    favicon.href=unitaro.dib.canvas.toDataURL()
-    unitaro.dib.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
+    favicon.href=Canvas.canvas.toDataURL()
+    Canvas.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
   },
   onclick: function(x,y){
   }
 };
 
 window.addEventListener('load',function(){
-  window.app = new unitaro.App(APP);
+  window.app = new App(APP);
 },false);
 
 </script>

@@ -12,7 +12,7 @@ var TitleScene={
   init:function(){
   },
   draw:function(){
-    unitaro.dib.textout(150,200,"CLICK TO START",100);
+    Canvas.textout(150,200,"CLICK TO START",100);
   },
   update:function(){
   },
@@ -24,25 +24,25 @@ var TitleScene={
 
 var GameScene={
   init:function(){
-    this.player=new unitaro.Task(PLAYER,app.WIDTH/2,400);
-    this.enemy_left=new unitaro.Task(ENEMY,-50,100);
-    this.enemy_right=new unitaro.Task(ENEMY,app.WIDTH+50,140);
+    this.player=new Task(PLAYER,app.WIDTH/2,400);
+    this.enemy_left=new Task(ENEMY,-50,100);
+    this.enemy_right=new Task(ENEMY,app.WIDTH+50,140);
   },
   draw:function(){
   },
   update:function(){
     if (!this.enemy_left.live){
-      this.enemy_left=new unitaro.Task(ENEMY,-50,100);
+      this.enemy_left=new Task(ENEMY,-50,100);
     }
     if (!this.enemy_right.live){
-      this.enemy_right=new unitaro.Task(ENEMY,app.WIDTH+50,140);
+      this.enemy_right=new Task(ENEMY,app.WIDTH+50,140);
     }
     if (!this.player.live){
       new Scene(TitleScene);
     }
   },
   onclick:function(x,y){
-    new unitaro.Task(TAMA,this.player.x,this.player.y);
+    new Task(TAMA,this.player.x,this.player.y);
     if (x<app.WIDTH/2){
       this.player.x-=4;
     }else{
@@ -100,7 +100,7 @@ var ENEMY={
       this.speed=2;
     }
     if (age%32==0){
-      new unitaro.Task(ENEMYTAMA,this.x,this.y);
+      new Task(ENEMYTAMA,this.x,this.y);
     }
   },
 };
@@ -126,14 +126,14 @@ var APP = {
   WIDTH: 320,
   HEIGHT: 500,
   init: function(){
-    new unitaro.Task(TitleScene);
+    new Task(TitleScene);
   },
   update: function(age){
-    unitaro.dib.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
-    unitaro.dib.box(10,10,this.WIDTH-20,this.HEIGHT-20,"rgb(0,0,0)");
-    unitaro.dib.textout(50,20,"Multi Scene sample","yellow",100);
+    Canvas.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
+    Canvas.box(10,10,this.WIDTH-20,this.HEIGHT-20,"rgb(0,0,0)");
+    Canvas.textout(50,20,"Multi Scene sample","yellow",100);
 
-    unitaro.TaskManager.hitcheck_all("player","enemy");
+    app.hitcheck_all("player","enemy");
   },
   onclick:function(x,y){
     
@@ -141,7 +141,7 @@ var APP = {
 };
 
 window.addEventListener('load',function(){
-	window.app = new unitaro.App(APP);
+	window.app = new App(APP);
 },false);
 
 </script>

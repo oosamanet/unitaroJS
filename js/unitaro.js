@@ -62,7 +62,10 @@ unitaro.dib={
     world.appendChild(this.canvas);
     this.ctx = this.canvas.getContext('2d');
     this.ctx.textAlign = "center";
-    this.ctx.font = "12px";
+    this.setFont("14px bold");
+  },
+  setFont: function(font){
+    this.ctx.font = font;
   },
   clear: function(x1,y1,w,h){
     this.ctx.clearRect(x1,y1,w,h);
@@ -319,27 +322,32 @@ unitaro.App=function(app){
       self.onclickend();
     }
   });
-
-  self.init();
-  var age=0;
-  var loop = function(){
-    clearTimeout(self.timer);
-    self.timer=setTimeout(function(){
-      if (!self.paused){
-        self.update(age);
-        unitaro.TaskManager.update_all();
-      }
-
-      unitaro.TaskManager.draw_all();
-
-      loop();
-      age++;
-    },1000/self.fps);
+  self.hitcheck_all=function(t1,t2){
+    unitaro.TaskManager.hitcheck_all(t1,t2);
   };
-  loop();
-  if (!self.target){
-    unitaro.scaler(unitaro.dib.target);
-  }
+
+  setTimeout(function(){
+    self.init();
+    var age=0;
+    var loop = function(){
+      clearTimeout(self.timer);
+      self.timer=setTimeout(function(){
+        if (!self.paused){
+          self.update(age);
+          unitaro.TaskManager.update_all();
+        }
+
+        unitaro.TaskManager.draw_all();
+
+        loop();
+        age++;
+      },1000/self.fps);
+    };
+    loop();
+    if (!self.target){
+      unitaro.scaler(unitaro.dib.target);
+    }
+  },0);
 };
 
 //make this object to global
@@ -350,5 +358,7 @@ unitaro.Scene=function(scene){
   unitaro.Task.apply(this,arguments);
 };
 Object.setPrototypeOf(unitaro.Scene.prototype,unitaro.Task.prototype);
+window.App=unitaro.App;
 window.Scene=unitaro.Scene;
+window.Canvas=unitaro.dib;
 window.TaskManager=unitaro.TaskManager;

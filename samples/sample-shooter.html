@@ -12,32 +12,32 @@ var TitleScene={
   init:function(){
   },
   update:function(){
-    unitaro.dib.textout(150,220,"Shooter sample","#f88",100);
-    unitaro.dib.textout(150,320,"Click to Start","#f88",100);
+    Canvas.textout(150,220,"Shooter sample","#f88",100);
+    Canvas.textout(150,320,"Click to Start","#f88",100);
   },
   onclick:function(){
     app.stage=1;
     app.score=0;
-    new unitaro.Scene(GameScene);
+    new Scene(GameScene);
   }
 };
 
 var GameScene={
   init:function(){
-    app.player=new unitaro.Task(PLAYER,app.WIDTH/2,400);
+    app.player=new Task(PLAYER,app.WIDTH/2,400);
     app.score=0;
   },
   draw:function(){
   },
   update:function(age){
-    unitaro.dib.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
-    unitaro.dib.box(10,10,this.WIDTH-20,this.HEIGHT-20,"rgb(0,0,0)");
-    unitaro.dib.textout(50,20,"SCORE "+app.score+":"+app.is_clickjust+":"+app.is_click,"yellow",100);
+    Canvas.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
+    Canvas.box(10,10,this.WIDTH-20,this.HEIGHT-20,"rgb(0,0,0)");
+    Canvas.textout(50,20,"SCORE "+app.score+":"+app.is_clickjust+":"+app.is_click,"yellow",100);
 
-    unitaro.TaskManager.hitcheck_all("tama","enemy");
-    unitaro.TaskManager.hitcheck_all("etama","player");
-    unitaro.TaskManager.hitcheck_all("item","player");
-    unitaro.TaskManager.hitcheck_all("enemy","player");
+    app.hitcheck_all("tama","enemy");
+    app.hitcheck_all("etama","player");
+    app.hitcheck_all("item","player");
+    app.hitcheck_all("enemy","player");
 
     if (app.is_click){
       if (app.mx<app.WIDTH/2){
@@ -48,16 +48,16 @@ var GameScene={
     }
 
     if (age%40==0){
-      this.enemy=new unitaro.Task(ENEMY);
+      this.enemy=new Task(ENEMY);
     }
     if (age%31==0){
-      this.item=new unitaro.Task(ENEMY2);
+      this.item=new Task(ENEMY2);
     }
     if (age%300==40){
-      this.item=new unitaro.Task(ITEM);
+      this.item=new Task(ITEM);
     }
     if (!app.player.live){
-      new unitaro.Scene(GameOverScene);
+      new Scene(GameOverScene);
     }
   }
 };
@@ -66,9 +66,9 @@ var ResultScene={
   init:function(){
   },
   update:function(){
-    unitaro.dib.textout(150,220,"Stage "+app.stage+" clear","white",100);
-    unitaro.dib.textout(150,270,"Score: "+app.score,100);
-    unitaro.dib.textout(150,370,"Click to Continue","white",100);
+    Canvas.textout(150,220,"Stage "+app.stage+" clear","white",100);
+    Canvas.textout(150,270,"Score: "+app.score,100);
+    Canvas.textout(150,370,"Click to Continue","white",100);
   },
   onclick:function(){
     console.dir("hoge");
@@ -81,12 +81,12 @@ var GameOverScene={
   init:function(){
   },
   update:function(){
-    unitaro.dib.textout(150,220,"GAME OVER","white",100);
-    unitaro.dib.textout(150,270,"Score: "+app.score,100);
+    Canvas.textout(150,220,"GAME OVER","white",100);
+    Canvas.textout(150,270,"Score: "+app.score,100);
     if (this.age<20){
       return;
     }
-    unitaro.dib.textout(150,370,"Click to Continue","white",100);
+    Canvas.textout(150,370,"Click to Continue","white",100);
   },
   onclick:function(){
     if (this.age<20){
@@ -116,14 +116,14 @@ var PLAYER={
   },
   shot:function(){
     if (this.level==1){
-      new unitaro.Task(DIRTAMA,this.x,this.y,270,10);
+      new Task(DIRTAMA,this.x,this.y,270,10);
     }else if (this.level==2){
-      new unitaro.Task(DIRTAMA,this.x-8,this.y,270,10);
-      new unitaro.Task(DIRTAMA,this.x+8,this.y,270,10);
+      new Task(DIRTAMA,this.x-8,this.y,270,10);
+      new Task(DIRTAMA,this.x+8,this.y,270,10);
     }else{
-      new unitaro.Task(DIRTAMA,this.x,this.y,250,10);
-      new unitaro.Task(DIRTAMA,this.x,this.y,270,10);
-      new unitaro.Task(DIRTAMA,this.x,this.y,290,10);
+      new Task(DIRTAMA,this.x,this.y,250,10);
+      new Task(DIRTAMA,this.x,this.y,270,10);
+      new Task(DIRTAMA,this.x,this.y,290,10);
     }
   },
   left:function(){
@@ -215,10 +215,10 @@ var ENEMY={
   onhit:function(x,y){
     app.score+=10;
     this.stop();
-    new unitaro.Task(BOMB,x,y,-5,-5);
-    new unitaro.Task(BOMB,x,y,5,-5);
-    new unitaro.Task(BOMB,x,y,-5,5);
-    new unitaro.Task(BOMB,x,y,5,5);
+    new Task(BOMB,x,y,-5,-5);
+    new Task(BOMB,x,y,5,-5);
+    new Task(BOMB,x,y,-5,5);
+    new Task(BOMB,x,y,5,5);
   }
 };
 
@@ -239,10 +239,10 @@ var ENEMY2={
   onhit:function(x,y){
     app.score+=10;
     this.stop();
-    new unitaro.Task(BOMB,x,y,-5,-5);
-    new unitaro.Task(BOMB,x,y,5,-5);
-    new unitaro.Task(BOMB,x,y,-5,5);
-    new unitaro.Task(BOMB,x,y,5,5);
+    new Task(BOMB,x,y,-5,-5);
+    new Task(BOMB,x,y,5,-5);
+    new Task(BOMB,x,y,-5,5);
+    new Task(BOMB,x,y,5,5);
   }
 };
 
@@ -303,10 +303,11 @@ var APP = {
   HEIGHT: 500,
   score:0,
   init: function(){
-    new unitaro.Task(TitleScene);
+    new Scene(TitleScene);
   },
   update: function(age){
-    unitaro.dib.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");  },
+    Canvas.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
+  },
   onclick: function(x,y){
     if (x > app.WIDTH){
       return;
@@ -323,7 +324,7 @@ var APP = {
 };
 
 window.addEventListener('load',function(){
-	window.app = new unitaro.App(APP);
+	window.app = new App(APP);
 },false);
 
 </script>
