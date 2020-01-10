@@ -9,34 +9,46 @@ var unitaro={};
 
 unitaro.scaler=function(id){
   var scale = function () {
-    var container = document.querySelector('#'+id+'-canvas');
-    var containerWidth = container.offsetWidth;
-    var containerHeight = container.offsetHeight;
+    var c = document.querySelector('#'+id+'-canvas');
+    var cw = c.width;
+    var ch = c.height;
 
-    var viewportWidth = document.documentElement.clientWidth;
-    var viewportHeight = document.documentElement.clientHeight;
+    var vw = window.innerWidth;
+    var vh = window.innerHeight;
 
-    var scaleWidth = viewportWidth / containerWidth;
-    var scaleHeight = viewportHeight / containerHeight;
-    var scaleBoth = (scaleHeight < scaleWidth) ? scaleHeight : scaleWidth;
+    var scaleWidth = vw / cw;
+    var scaleHeight = vh / ch;
+    var aspect = ch / cw;
 
-    var newContainerWidth = containerWidth * scaleBoth;
-    var newContainerHeight = containerHeight * scaleBoth;
-
-    var left = (viewportWidth - newContainerWidth) / 2;
-    left = parseInt(left * (1 / scaleBoth), 10);
-
-    var top = (viewportHeight - newContainerHeight) / 2;
-    top = parseInt(top * (1 / scaleBoth), 10);
-
-    // scale the whole container
-    var transform = 'scale(' + scaleBoth + ',' + scaleBoth + ') translate(' + left + 'px, ' + top + 'px)';
-    container.style['-webkit-transform-origin'] = 'top left 0';
-    container.style['-webkit-transform'] = transform;
-    container.style['transform-origin'] = 'top left 0';
-    container.style['transform'] = transform;
-    unitaro.scale=scaleBoth;
-    unitaro.offset=[left*scaleBoth,top*scaleBoth];
+    s=c.style;
+    s.position = 'absolute';
+    s.left = '0px';
+    s.right = '0px';
+    s.top = '0px';
+    s.bottom = '0px';
+    s.margin = 'auto';
+    var dw,dh;
+    if (scaleHeight > scaleWidth){
+      dw = Math.floor(vw);
+      dh = Math.floor(vw*aspect);
+      unitaro.offset=[0,(vh-dh)/2];
+      unitaro.scale = ch / dh;
+    }else{
+      dw = Math.floor(vh/aspect);
+      dh = Math.floor(vh);
+      var scale = cw / dw;
+      unitaro.offset=[(vw-dw)/2,0];
+      unitaro.scale = cw / dw;
+    }
+    var rect=c.getBoundingClientRect();
+    console.info(rect);
+console.info(cw+":"+ch+" "+vw+":"+vh+" -> "+dw+":"+dh);
+    s.width = dw + "px";
+    s.height = dh + "px";
+    unitaro.dw = dw;
+    unitaro.dh = dh;
+    unitaro.cw = cw;
+    unitaro.ch = ch;
   };
 
   window.onresize = scale;
@@ -333,13 +345,12 @@ unitaro.App=function(app){
 
   var _click = (window.ontouchstart === undefined)? 'mousedown' : 'touchstart';
   window.addEventListener(_click,function(e){
-    var x=e.touches ? e.touches[0].pageX : e.pageX;
-    var y=e.touches ? e.touches[0].pageY : e.pageY;
-    if (unitaro.scaler && unitaro.offset){
-      x=x-unitaro.offset[0];
-      y=y-unitaro.offset[1];
-      x/=unitaro.scale;
-      y/=unitaro.scale;
+    var x=e.touches ? e.touches[0].pageX-unitaro.offset[0] : e.offsetX;
+    var y=e.touches ? e.touches[0].pageY-unitaro.offset[1] : e.offsetY;
+    if (unitaro.scaler){
+      console.info(e);
+      x = x * unitaro.scale;
+      y = y * unitaro.scale;
     }
     unitaro.TaskManager.call_all_with_hitcheck("onclick",x,y);
     if (self.onclick){
