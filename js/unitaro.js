@@ -270,6 +270,37 @@ unitaro.Task.prototype={
     this.x += speed * Math.cos(rad);
     this.y += speed * Math.sin(rad);
   },
+  hsv2rgb:function(h,s,v){
+    var r=v,g=v,b=v;
+    if (s>0){
+      h*=6;
+      var i=~~h;
+      var f = h-i;
+      if (i==0){
+        g *= 1 - s * (1 - f);
+        b *= 1 - s;
+      }else if (i==1){
+        r *= 1 - s * f;
+        b *= 1 - s;
+      }else if (i==2){
+        r *= 1 - s;
+        b *= 1 - s * (1 - f);
+      }else if (i==3){
+        r *= 1 - s;
+        g *= 1 - s * f;
+      }else if (i==4){
+        r *= 1 - s * (1 - f);
+        g *= 1 - s;
+      }else if (i==5){
+        g *= 1 - s;
+        b *= 1 - s * f;
+      }
+    }
+    r=~~(r*255);
+    g=~~(g*255);
+    b=~~(b*255);
+    return "rgb("+r+","+g+","+b+")";
+  },
   calcdir: function(tx,ty){
     var rad=Math.atan2(ty-this.y,tx-this.x);
     if (rad===NaN){
