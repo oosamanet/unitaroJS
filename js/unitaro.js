@@ -6,6 +6,8 @@ oosamanet@gmail.com
 
 */
 var unitaro={};
+unitaro.offset=[0,0];
+unitaro.scale=1.0;
 
 unitaro.scaler=function(id){
   var scale = function () {
