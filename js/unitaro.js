@@ -347,6 +347,7 @@ unitaro.App=function(app){
 
   var _click = (window.ontouchstart === undefined)? 'mousedown' : 'touchstart';
   window.addEventListener(_click,function(e){
+    unitaro.is_click = true;
     var x=e.touches ? e.touches[0].pageX-unitaro.offset[0] : e.offsetX;
     var y=e.touches ? e.touches[0].pageY-unitaro.offset[1] : e.offsetY;
     if (unitaro.scaler){
@@ -359,8 +360,22 @@ unitaro.App=function(app){
       self.onclick(x,y);
     }
   });
+  var _click = (window.ontouchstart === undefined)? 'mousemove' : 'touchmove';
+  window.addEventListener(_click,function(e){
+    var x=e.touches ? e.touches[0].pageX-unitaro.offset[0] : e.offsetX;
+    var y=e.touches ? e.touches[0].pageY-unitaro.offset[1] : e.offsetY;
+    if (unitaro.scaler){
+      x = x * unitaro.scale;
+      y = y * unitaro.scale;
+    }
+    unitaro.TaskManager.call_all_with_hitcheck("onmove",x,y,unitaro.is_click);
+    if (self.onmove){
+      self.onmove(x,y,unitaro.is_click);
+    }
+  });
   var _click = (window.ontouchstart === undefined)? 'mouseup' : 'touchend';
   window.addEventListener(_click,function(e){
+    unitaro.is_click = false;
     unitaro.TaskManager.call_all_with_hitcheck("onclickend");
     if (self.onclickend){
       self.onclickend();

@@ -1,0 +1,77 @@
+<html>
+<head>
+<meta charset="utf-8">
+<title>UNITAROjs</title>
+<meta name="viewport" content="width=device-width,user-scalable=no" />
+<script src="../js/unitaro.js"></script>
+</head>
+<body style="margin:0">
+<script>
+
+var SPARK={
+  w:20,
+  h:20,
+  init:function(x,y,color){
+    this.x=x;
+    this.y=y;
+    this.color=color;
+    this.dir=Math.random()*360;
+    this.speed=Math.random()*15+5;
+  },
+  update:function(age){
+    //移動速度が0以下で消去
+    this.speed -= 0.1;
+    if (this.speed<0){
+      this.stop();
+    }
+    this.movedir(this.dir,this.speed);
+  }
+};
+
+var FIREWORKS={
+  w:15,
+  h:15,
+  init:function(x,target){
+    this.x=x;
+    this.target=target;
+    this.y=app.HEIGHT;
+    this.color=this.hsv2rgb(Math.random(),1,1);
+  },
+  update:function(age){
+    //移動
+    this.y -= 5;
+    if (this.y<this.target){
+      for (var i=0;i<100;i++){
+        new Task(SPARK,this.x,this.y,this.color);
+      }
+      this.stop();
+    }
+  }
+};
+
+var APP = {
+  check_outside:true,
+  WIDTH: 320,
+  HEIGHT: 500,
+  init: function(){
+  },
+  update: function(age){
+    unitaro.dib.box(0,0,this.WIDTH,this.HEIGHT,"rgb(0,0,0)");
+    unitaro.dib.textout(50,20,"SPARK sample","yellow",100);
+  },
+  onclick: function(x,y){
+    var self=this;
+    //クリックされた時に呼ばれる関数
+    this.fire=new unitaro.Task(FIREWORKS,x,y);
+  }
+};
+
+window.addEventListener('load',function(){
+	window.app = new App(APP);
+},false);
+
+</script>
+<div id="world">
+</div>
+</body>
+</html>

@@ -1,0 +1,214 @@
+<html>
+<head>
+<meta charset="utf-8">
+<title>UNITAROjs</title>
+<meta name="viewport" content="width=device-width,user-scalable=no" />
+<script src="../js/unitaro.js"></script>
+</head>
+<body style="margin:0">
+<script>
+
+var TitleScene={
+  init:function(){
+  },
+  update:function(){
+    Canvas.textout(150,220,"Block sample","#f88",100);
+    Canvas.textout(150,320,"Click to Start","#f88",100);
+  },
+  onclick:function(){
+    app.stage=1;
+    app.score=0;
+    new Scene(GameScene);
+  }
+};
+
+var GameScene={
+  init:function(){
+    app.player=new Task(PLAYER,app.WIDTH/2,400);
+    app.score=0;
+    var w=app.WIDTH/5;
+    app.blocks=0;
+    for (var i=0;i<5;i++){
+      var x=i*w+w/2;
+      new Task(BLOCK,x,15);
+      app.blocks++;
+    }
+  },
+  draw:function(){
+  },
+  update:function(age){
+    Canvas.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
+    Canvas.box(10,10,this.WIDTH-20,this.HEIGHT-20,"rgb(0,0,0)");
+    Canvas.textout(50,50,"SCORE "+app.score+":"+app.is_click+":"+app.is_clickjust,"yellow",100);
+
+    app.hitcheck_all("block","ball");
+    app.hitcheck_all("ball","player");
+
+    if (app.is_click){
+      if (app.mx<app.WIDTH/2){
+        app.player.left();
+      }else{
+        app.player.right();
+      }
+    }
+
+    if (!app.player.live){
+      new Scene(GameOverScene);
+    }
+  }
+};
+
+var ResultScene={
+  init:function(){
+  },
+  update:function(){
+    Canvas.textout(150,220,"Stage "+app.stage+" clear","white",100);
+    Canvas.textout(150,270,"Score: "+app.score,100);
+    Canvas.textout(150,370,"Click to Continue","white",100);
+  },
+  onclick:function(){
+    console.dir("hoge");
+    app.stage++;
+    new Scene(GameScene);
+  }
+};
+
+var GameOverScene={
+  init:function(){
+  },
+  update:function(){
+    Canvas.textout(150,220,"GAME OVER","white",100);
+    Canvas.textout(150,270,"Score: "+app.score,100);
+    if (this.age<20){
+      return;
+    }
+    Canvas.textout(150,370,"Click to Continue","white",100);
+  },
+  onclick:function(){
+    if (this.age<20){
+      return;
+    }
+    new Scene(TitleScene);
+  }
+};
+
+var PLAYER={
+  w:80,
+  h:30,
+  color:'#00f',
+  type: 'player',
+  speed:10,
+  level:1,
+  init:function(x,y){
+    this.x=x;
+    this.y=y;
+  },
+  update:function(age){
+    if (app.is_clickjust){
+      new Task(BALL,this.x,this.y-15);
+    }
+  },
+  left:function(){
+    this.x-=4;
+  },
+  right:function(){
+    this.x+=4;
+  },
+  onhit:function(x,y,type){
+    if (type=='item'){
+      this.level++;
+    }else{
+    }
+  }
+};
+
+var BALL={
+  w:20,
+  h:20,
+  color:'#fff',
+  type: 'ball',
+  init:function(x,y){
+    this.x=x;
+    this.y=y;
+    this.xspeed=3;
+    this.yspeed=-3;
+  },
+  update:function(age){
+    this.x+=this.xspeed;
+    this.y+=this.yspeed;
+    if (this.x<this.w/2){
+      this.x=this.w/2;
+      this.xspeed=-this.xspeed;
+    }
+    if (this.x>app.WIDTH-this.w/2){
+      this.x=app.WIDTH-this.w/2;
+      this.xspeed=-this.xspeed;
+    }
+    if (this.y<this.h/2){
+      this.y=this.h/2;
+      this.yspeed=-this.yspeed;
+    }
+  },
+  onhit:function(x,y,type,target){
+    if (type=='block'){
+      this.yspeed = -this.yspeed;
+    }else{
+      this.yspeed = -this.yspeed;
+      this.y = target.y-15-10;
+    }
+  }
+};
+
+var BLOCK={
+  w:64,
+  h:30,
+  type:'block',
+  init:function(x,y){
+    this.x=x;
+    this.y=y;
+    this.color=this.hsv2rgb(Math.random(),1,1);
+  },
+  update:function(age){
+  },
+  onhit:function(x,y){
+    app.score+=10;
+    this.stop();
+  }
+};
+
+var APP = {
+  WIDTH: 320,
+  HEIGHT: 500,
+  score:0,
+  init: function(){
+    new Scene(TitleScene);
+  },
+  update: function(age){
+    Canvas.box(0,0,this.WIDTH,this.HEIGHT,"rgb(40,40,40)");
+    if (this.is_click && !this.is_clicklast){
+      this.is_clickjust=true;
+    }else{
+      this.is_clickjust=false;
+    }
+    this.is_clicklast=this.is_click;
+  },
+  onclick: function(x,y){
+    if (x > app.WIDTH){
+      return;
+    }
+    this.is_click=true;
+    this.mx=x;
+    this.my=y;
+  },
+  onclickend: function(x,y){
+    this.is_click=false;
+  }
+};
+
+window.addEventListener('load',function(){
+	window.app = new App(APP);
+},false);
+
+</script>
+</body>
+</html>
